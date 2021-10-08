@@ -190,7 +190,11 @@ class UNETR(nn.Module):
     def forward(self, x_in):
         print("x_in", x_in.size())
         x, hidden_states_out = self.vit(x_in)
-        print("x", x.size(), "hidden_states_out", hidden_states_out)
+        print("x", x.size())
+        print("hidden_states_out  ", end="")
+        for tensor in hidden_states_out:
+            print(tensor.size(), "   ", end="")
+        print("   ")
         enc1 = self.encoder1(x_in)
         print("enc1", enc1.size())
         x2 = hidden_states_out[3]
