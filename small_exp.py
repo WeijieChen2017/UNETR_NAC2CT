@@ -23,14 +23,15 @@ print(halfPET.shape)
 # 700x700x700 343 patches
 
 # try to input it to the UNETR model
-
+# H*W*D*C -> patch (N*N*N)
+# L = H*W*D*C / N^3
 model = UNETR(
     in_channels=1,
     out_channels=1,
     img_size=(100, 100, 100),
     feature_size=16,
     hidden_size=768,
-    mlp_dim=3072,
+    mlp_dim=343,
     num_heads=12,
     pos_embed="perceptron",
     norm_name="instance",
