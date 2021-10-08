@@ -119,7 +119,7 @@ val_transforms = Compose(
     ]
 )
 
-data_dir = "/dataset/"
+data_dir = "./dataset/"
 split_JSON = "dataset_0.json"
 datasets = data_dir + split_JSON
 datalist = load_decathlon_datalist(datasets, True, "training")
