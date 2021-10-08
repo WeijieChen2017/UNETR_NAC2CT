@@ -28,7 +28,7 @@ print(halfPET.shape)
 model = UNETR(
     in_channels=1,
     out_channels=1,
-    img_size=(100, 100, 100),
+    img_size=(700, 700, 700),
     feature_size=16,
     hidden_size=768,
     mlp_dim=343,
