@@ -16,7 +16,7 @@ def normX(data):
     return data
 
 # try to load one data
-filePET = nib.load("./dataset/petTr/RS_011.nii.gz")
+filePET = nib.load("./dataset/sctTr/CUB_011.nii.gz")
 dataPET = filePET.get_fdata()[:, :, -512:]
 normPET = normX(dataPET)
 print(normPET.shape)
