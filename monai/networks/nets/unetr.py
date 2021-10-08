@@ -188,17 +188,31 @@ class UNETR(nn.Module):
         return x
 
     def forward(self, x_in):
+        print("x_in", x_in.size())
         x, hidden_states_out = self.vit(x_in)
+        print("x", x.size(), "hidden_states_out", hidden_states_out.size())
         enc1 = self.encoder1(x_in)
+        print("enc1", enc1.size())
         x2 = hidden_states_out[3]
+        print("x2", x2.size())
         enc2 = self.encoder2(self.proj_feat(x2, self.hidden_size, self.feat_size))
+        print("enc2", enc2.size())
         x3 = hidden_states_out[6]
+        print("x3", x3.size())
         enc3 = self.encoder3(self.proj_feat(x3, self.hidden_size, self.feat_size))
+        print("enc3", enc3.size())
         x4 = hidden_states_out[9]
+        print("x4", x4.size())
         enc4 = self.encoder4(self.proj_feat(x4, self.hidden_size, self.feat_size))
+        print("enc4", enc4.size())
         dec4 = self.proj_feat(x, self.hidden_size, self.feat_size)
+        print("dec4", dec4.size())
         dec3 = self.decoder5(dec4, enc4)
+        print("dec3", dec3.size())
         dec2 = self.decoder4(dec3, enc3)
+        print("dec2", dec2.size())
         dec1 = self.decoder3(dec2, enc2)
+        print("dec1", dec1.size())
         out = self.decoder2(dec1, enc1)
+        print("out", out.size())
         return self.out(out)
