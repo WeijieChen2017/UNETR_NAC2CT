@@ -18,6 +18,8 @@ def normX(data):
 # try to load one data
 filePET = nib.load("./dataset/sctTr/CUB_011.nii.gz")
 dataPET = filePET.get_fdata()[:, :, -512:]
+hx, hy, hz = dataPET.shape
+dataPET = np.resize(dataPET, (hx//2, hy//2, hz//2))
 normPET = normX(dataPET)
 normPET = np.expand_dims(normPET, axis=(0, 1))
 print(normPET.shape)
