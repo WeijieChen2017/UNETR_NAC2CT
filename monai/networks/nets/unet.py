@@ -130,21 +130,18 @@ class UNet(nn.Module):
             s = strides[0]
 
             subblock: nn.Module
-            # print("channels: ", channels)
-            # print("c:", c)
-            if len(channels) > 1:
+
+            if len(channels) > 2:
                 subblock = _create_block(c, c, channels[1:], strides[1:], False)  # continue recursion down
                 upc = c * 2
             else:
                 # the next layer is the bottom so stop recursion, create the bottom layer as the sublock for this layer
-                # print("Bott:", c, channels[0])
-                subblock = self._get_bottom_layer(c, channels[0])
-                upc = c + channels[0]
+                subblock = self._get_bottom_layer(c, channels[1])
+                upc = c + channels[1]
 
             down = self._get_down_layer(inc, c, s, is_top)  # create layer in downsampling path
             up = self._get_up_layer(upc, outc, s, is_top)  # create layer in upsampling path
-            # print("down: ", inc, c)
-            # print("up: ", upc, outc)
+
             return nn.Sequential(down, SkipConnection(subblock), up)
 
         self.model = _create_block(in_channels, out_channels, self.channels, self.strides, True)
@@ -192,9 +189,6 @@ class UNet(nn.Module):
             in_channels: number of input channels.
             out_channels: number of output channels.
         """
-
-        # print("bottom: ", in_channels, out_channels)
-
         return self._get_down_layer(in_channels, out_channels, 1, False)
 
     def _get_up_layer(self, in_channels: int, out_channels: int, strides: int, is_top: bool) -> nn.Module:
@@ -205,21 +199,20 @@ class UNet(nn.Module):
             strides: convolution stride.
             is_top: True if this is the top block.
         """
-        # conv: Union[Convolution, nn.Sequential]
-        # print("In: ", in_channels, " Out: ", out_channels)
-        conv = nn.Sequential()
-        conv.add_module("conv", Convolution(
-                                    self.dimensions,
-                                    in_channels,
-                                    out_channels,
-                                    strides=1,
-                                    kernel_size=self.up_kernel_size,
-                                    act=self.act,
-                                    norm=self.norm,
-                                    dropout=self.dropout,
-                                    bias=self.bias,
-                                    conv_only=is_top and self.num_res_units == 0,
-                                )
+        conv: Union[Convolution, nn.Sequential]
+
+        conv = Convolution(
+            self.dimensions,
+            in_channels,
+            out_channels,
+            strides=strides,
+            kernel_size=self.up_kernel_size,
+            act=self.act,
+            norm=self.norm,
+            dropout=self.dropout,
+            bias=self.bias,
+            conv_only=is_top and self.num_res_units == 0,
+            is_transposed=True,
         )
 
         if self.num_res_units > 0:
@@ -236,11 +229,7 @@ class UNet(nn.Module):
                 bias=self.bias,
                 last_conv_only=is_top,
             )
-            conv.add_module("ru", ru)
-
-        up = nn.Upsample(scale_factor=2.0, mode='trilinear', align_corners=True)
-
-        conv.add_module("up", up)
+            conv = nn.Sequential(conv, ru)
 
         return conv
 

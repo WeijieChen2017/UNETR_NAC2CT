@@ -131,7 +131,22 @@ class Convolution(nn.Sequential):
         conv_type = Conv[Conv.CONVTRANS if is_transposed else Conv.CONV, self.dimensions]
 
         conv: nn.Module
-        conv = conv_type(
+        if is_transposed:
+            if output_padding is None:
+                output_padding = stride_minus_kernel_padding(1, strides)
+            conv = conv_type(
+                in_channels,
+                out_channels,
+                kernel_size=kernel_size,
+                stride=strides,
+                padding=padding,
+                output_padding=output_padding,
+                groups=groups,
+                bias=bias,
+                dilation=dilation,
+            )
+        else:
+            conv = conv_type(
                 in_channels,
                 out_channels,
                 kernel_size=kernel_size,
@@ -139,22 +154,10 @@ class Convolution(nn.Sequential):
                 padding=padding,
                 dilation=dilation,
                 groups=groups,
-                bias=bias
+                bias=bias,
             )
-        self.add_module("conv", conv)
 
-            # conv = conv_type(
-            #     in_channels,
-            #     out_channels,
-            #     kernel_size=kernel_size,
-            #     stride=strides,
-            #     padding=padding,
-            #     dilation=dilation,
-            #     groups=groups,
-            #     bias=bias,
-            # )
-            
-        # self.add_module("conv", conv)
+        self.add_module("conv", conv)
 
         if not conv_only:
             self.add_module(
@@ -272,7 +275,7 @@ class ResidualUnit(nn.Module):
         self.dimensions = spatial_dims if dimensions is None else dimensions
         self.in_channels = in_channels
         self.out_channels = out_channels
-        
+        self.conv = nn.Sequential()
         self.residual = nn.Identity()
         if not padding:
             padding = same_padding(kernel_size, dilation)
@@ -280,33 +283,13 @@ class ResidualUnit(nn.Module):
         sstrides = strides
         subunits = max(1, subunits)
 
-        # add not regular conv before down-sampling
-        unit = Convolution(
-                self.dimensions,
-                in_channels,
-                out_channels,
-                strides=1,
-                kernel_size=kernel_size,
-                adn_ordering=adn_ordering,
-                act=act,
-                norm=norm,
-                dropout=dropout,
-                dropout_dim=dropout_dim,
-                dilation=dilation,
-                bias=bias,
-                conv_only=False,
-                padding=padding,
-            )
-        self.first_conv = unit
-
-        self.conv = nn.Sequential()
-
         for su in range(subunits):
+            conv_only = last_conv_only and su == (subunits - 1)
             unit = Convolution(
                 self.dimensions,
+                schannels,
                 out_channels,
-                out_channels,
-                strides=1,
+                strides=sstrides,
                 kernel_size=kernel_size,
                 adn_ordering=adn_ordering,
                 act=act,
@@ -315,65 +298,29 @@ class ResidualUnit(nn.Module):
                 dropout_dim=dropout_dim,
                 dilation=dilation,
                 bias=bias,
-                conv_only=False,
+                conv_only=conv_only,
                 padding=padding,
             )
+
             self.conv.add_module(f"unit{su:d}", unit)
 
-        if sstrides == 2:
-            self.down = nn.MaxPool3d(kernel_size=2, stride=2, padding=0)
-        else:
-            self.down = nn.Identity()
-                
-
-        # for su in range(subunits):
-        #     conv_only = last_conv_only and su == (subunits - 1)
-        #     unit = Convolution(
-        #         self.dimensions,
-        #         schannels,
-        #         out_channels,
-        #         strides=sstrides,
-        #         kernel_size=kernel_size,
-        #         adn_ordering=adn_ordering,
-        #         act=act,
-        #         norm=norm,
-        #         dropout=dropout,
-        #         dropout_dim=dropout_dim,
-        #         dilation=dilation,
-        #         bias=bias,
-        #         conv_only=conv_only,
-        #         padding=padding,
-        #     )
-
-        #     self.conv.add_module(f"unit{su+subunits:d}", unit)
-        #     schannels = out_channels
-        #     sstrides = 1
             # after first loop set channels and strides to what they should be for subsequent units
+            schannels = out_channels
+            sstrides = 1
 
         # apply convolution to input to change number of output channels and size to match that coming from self.conv
-        # if np.prod(strides) != 1 or in_channels != out_channels:
-        #     rkernel_size = kernel_size
-        #     rpadding = padding
+        if np.prod(strides) != 1 or in_channels != out_channels:
+            rkernel_size = kernel_size
+            rpadding = padding
 
-        #     if np.prod(strides) == 1:  # if only adapting number of channels a 1x1 kernel is used with no padding
-        #         rkernel_size = 1
-        #         rpadding = 0
+            if np.prod(strides) == 1:  # if only adapting number of channels a 1x1 kernel is used with no padding
+                rkernel_size = 1
+                rpadding = 0
 
-            # conv_type = Conv[Conv.CONV, self.dimensions]
-            # self.residual = conv_type(in_channels, out_channels, rkernel_size, strides, rpadding, bias=bias)
-        # self.residual = nn.MaxPool3d(kernel_size=2, stride=2, padding=0)
+            conv_type = Conv[Conv.CONV, self.dimensions]
+            self.residual = conv_type(in_channels, out_channels, rkernel_size, strides, rpadding, bias=bias)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # x = self.first_conv(x)
-        # res: torch.Tensor = self.residual(x)  # create the additive residual from x
-        # cx: torch.Tensor = self.conv(x)  # apply x to sequence of operations
-        # print(x.size(), res.size(), cx.size())
-        # return cx + res  # add the residual to the output
-        # print(x.size())
-        x = self.first_conv(x)
-        # print(x.size())
-        x = x + self.conv(x)
-        # print(x.size())
-        x = self.down(x)
-        # print(x.size())
-        return x
+        res: torch.Tensor = self.residual(x)  # create the additive residual from x
+        cx: torch.Tensor = self.conv(x)  # apply x to sequence of operations
+        return cx + res  # add the residual to the output

@@ -286,9 +286,7 @@ def conv_factory(dim: int) -> Type[Union[nn.Conv1d, nn.Conv2d, nn.Conv3d]]:
 @Conv.factory_function("convtrans")
 def convtrans_factory(dim: int) -> Type[Union[nn.ConvTranspose1d, nn.ConvTranspose2d, nn.ConvTranspose3d]]:
     types = (nn.ConvTranspose1d, nn.ConvTranspose2d, nn.ConvTranspose3d)
-    # return types[dim - 1]
-    up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
-    return up
+    return types[dim - 1]
 
 
 @Pool.factory_function("max")
