@@ -26,7 +26,7 @@ print(normPET.shape)
 # try to input it to the UNETR model
 # H*W*D*C -> patch (N*N*N)
 # L = H*W*D*C / N^3
-device = torch.device("cuda" if not opt.cpu else "cpu")
+device = torch.device("cuda")
 model = UNETR(
     in_channels=1,
     out_channels=1,
