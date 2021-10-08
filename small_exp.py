@@ -19,7 +19,7 @@ def normX(data):
 filePET = nib.load("./dataset/sctTr/CUB_011.nii.gz")
 dataPET = filePET.get_fdata()[:, :, -512:]
 normPET = normX(dataPET)
-normPET = np..expand_dims(normPET, axis=(0, 1))
+normPET = np.expand_dims(normPET, axis=(0, 1))
 print(normPET.shape)
 # 700x700x700 343 patches
 # 3dresample -dxyz 1.367 1.367 1.367 -prefix CUB_011.nii.gz -input CT_011.nii.gz
