@@ -19,7 +19,8 @@ def normX(data):
 filePET = nib.load("./dataset/sctTr/CUB_011.nii.gz")
 dataPET = filePET.get_fdata()[:, :, -512:]
 hx, hy, hz = dataPET.shape
-dataPET = np.resize(dataPET, (hx//2, hy//2, hz//2))
+lx, ly, lz = hx//2, hy//2, hz//2
+dataPET = np.resize(dataPET, (lx, ly, lz))
 normPET = normX(dataPET)
 normPET = np.expand_dims(normPET, axis=(0, 1))
 print(normPET.shape)
@@ -33,7 +34,7 @@ device = torch.device("cuda")
 model = UNETR(
     in_channels=1,
     out_channels=1,
-    img_size=(512, 512, 512),
+    img_size=(lx, ly, lz),
     feature_size=64,
     hidden_size=1024,
     mlp_dim=4096,
