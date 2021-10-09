@@ -189,6 +189,16 @@ class UNETR(nn.Module):
         return x
 
     def forward(self, x_in):
+
+
+        print("-"*60)
+        for module in [self.ViT, self.encoder1, self.encoder2, self.encoder3, self.encoder4,
+                       self.decoder2, self.decoder3, self.decoder4, self.decoder5]:
+            print(module.parameters())
+        print("-"*60)
+
+
+
         print("x_in", x_in.size())
         x, hidden_states_out = self.vit(x_in)
         print("x", x.size())
