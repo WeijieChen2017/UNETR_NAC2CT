@@ -192,7 +192,7 @@ class UNETR(nn.Module):
 
 
         print("-"*60)
-        for module in [self.ViT, self.encoder1, self.encoder2, self.encoder3, self.encoder4,
+        for module in [self.vit, self.encoder1, self.encoder2, self.encoder3, self.encoder4,
                        self.decoder2, self.decoder3, self.decoder4, self.decoder5]:
             print(module.parameters())
         print("-"*60)
