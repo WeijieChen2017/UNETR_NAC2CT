@@ -44,9 +44,9 @@ model = UNETR(
     norm_name="instance",
     res_block=True,
     dropout_rate=0.0,
-).float().to(device)
+).half().to(device)
 
-inputPET = torch.from_numpy(normPET).float().to(device)
+inputPET = torch.from_numpy(normPET).half().to(device)
 outputPET = model(inputPET)
 print(outputPET.size())
 # model.add_module("linear", nn.Linear(in_features = opt.block_size, 
