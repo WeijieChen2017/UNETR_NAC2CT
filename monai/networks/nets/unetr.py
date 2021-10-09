@@ -10,6 +10,7 @@
 # limitations under the License.
 
 from typing import Sequence, Tuple, Union
+import time
 
 import torch.nn as nn
 
@@ -240,4 +241,5 @@ class UNETR(nn.Module):
         # print("dec1", dec1.size())
         out = self.decoder2(dec1, enc1)
         # print("out", out.size())
+        time.sleep(5.5)
         return self.out(out)

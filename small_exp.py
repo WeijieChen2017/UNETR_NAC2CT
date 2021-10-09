@@ -4,6 +4,7 @@ import torch.nn as nn
 
 import torch
 import glob
+import time
 import os
 
 from monai.networks.nets import UNETR
@@ -49,6 +50,7 @@ model = UNETR(
 
 inputPET = torch.from_numpy(normPET).half().to(device)
 outputPET = model(inputPET)
+time.sleep(5.5)
 print(outputPET.size())
 # model.add_module("linear", nn.Linear(in_features = opt.block_size, 
 #                                      out_features = opt.block_size)).to(device)
