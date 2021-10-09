@@ -47,7 +47,7 @@ sizeOutput = torch.from_numpy(np.array((256, 256, widthZ)))
 model.add_module("linear", nn.Linear(in_features = 256, out_features = 256))
 model.half().to(device)
 
-criterion = nn.HuberLoss()
+criterion = nn.MSELoss()
 torch.backends.cudnn.benchmark = True
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-6, weight_decay=1e-5)
 model.train()
