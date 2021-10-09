@@ -14,8 +14,9 @@ from torch.nn import Linear
 def recursive_mean(inputUnknown):
     if inputUnknown is torch.Tensor:
         return torch.mean(inputUnknown)
-        print("==>", inputUnknown.type())
+        print("==>", type(inputUnknown))
     else:
+        print("@@", type(inputUnknown))
         results = []
         for sub in inputUnknown:
             print("==/", end="")
