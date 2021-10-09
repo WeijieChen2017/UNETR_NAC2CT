@@ -15,10 +15,9 @@ def recursive_mean(inputUnknown):
     if inputUnknown is torch.Tensor:
         return torch.mean(inputUnknown)
     else:
-        return (recursive_mean(sub) for sub in inputUnknown if True)
+        return (recursive_mean(sub) for sub in inputUnknown)
 
 def hook_backward_fn(module, grad_input, grad_output):
-    for tensor in 
     grad_input = recursive_mean(grad_input)
     grad_output = recursive_mean(grad_output)
     print(f"module: {module}")
