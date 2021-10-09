@@ -90,8 +90,10 @@ for idz in range(lz//widthZ):
         
         realInputX = torch.from_numpy(inputBatchX).half().to(device)
         realInputY = torch.from_numpy(inputBatchY).half().to(device)
+        realOutput = model(realInputX)
+        print("==>Output shape: ", realOutput.size())
         optimizer.zero_grad()
-        loss = criterion(model(realInputX), realInputY)
+        loss = criterion(realOutput, realInputY)
         loss.backward()
         optimizer.step()
         loss_voxel = loss.item()
