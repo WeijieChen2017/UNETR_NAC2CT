@@ -50,7 +50,7 @@ model.half().to(device)
 criterion = nn.HuberLoss()
 torch.backends.cudnn.benchmark = True
 optimizer = torch.optim.AdamW(model.parameters())
-model.train()
+# model.train()
 
 
 # try to load one data
@@ -97,14 +97,16 @@ for idz in range(lz//widthZ):
         print("==>Output shape: ", realOutput.size())
         optimizer.zero_grad()
         loss = criterion(realOutput, realInputY)
-        print(loss.data)
-        print(loss.grad)
         loss.backward()
-        print(loss.grad)
         optimizer.step()
-        print(loss.grad)
-        loss_voxel = loss.item()
 
+        print("@"*60)
+        print(model)
+        # print(model.)
+        print("@"*60)
+
+
+        loss_voxel = loss.item()
         loss_mean = np.mean(loss_voxel)
         loss_std = np.std(loss_voxel)
         # print("==>", loss_voxel)
