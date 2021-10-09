@@ -25,11 +25,11 @@ def recursive_mean(inputUnknown):
         return results
 
 def hook_backward_fn(module, grad_input, grad_output):
-    grad_input = recursive_mean(grad_input)
-    grad_output = recursive_mean(grad_output)
     print(f"module: {module}")
     print(f"grad_output: {grad_output}")
     print(f"grad_input: {grad_input}")
+    grad_input = recursive_mean(grad_input)
+    grad_output = recursive_mean(grad_output)
     print("*"*20)
 
 def normX(data):
