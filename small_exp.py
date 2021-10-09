@@ -67,6 +67,7 @@ print(normPET.shape, normSCT.shape)
 cntBatch = 0
 inputBatchX = np.zeros((batch_size, 1, lx, ly, widthZ))
 inputBatchY = np.zeros((batch_size, 1, lx, ly, widthZ))
+print(inputBatchX.shape, inputBatchY.shape)
 lenData = lz // widthZ
 
 
@@ -76,6 +77,7 @@ lenData = lz // widthZ
 for idz in range(lz//widthZ):
     sliceBatchX = normPET[:, :, :, :, idz*widthZ : (idz+1)*widthZ]
     sliceBatchY = normSCT[:, :, :, :, idz*widthZ : (idz+1)*widthZ]
+    print(sliceBatchX.shape, sliceBatchY.shape)
     inputBatchX[cntBatch, :, :, :, :] = sliceBatchX
     inputBatchY[cntBatch, :, :, :, :] = sliceBatchY
     cntBatch += 1
