@@ -11,9 +11,16 @@ import os
 from monai.networks.nets import UNETR
 from torch.nn import Linear
 
+def recursive_mean(input):
+    if input is torch.Tensor:
+        return torch.mean(input)
+    else:
+        return (recursive_mean(sub) for sub in input)
+
 def hook_backward_fn(module, grad_input, grad_output):
-    grad_input = torch.mean(grad_input)
-    grad_output = grad_input(grad_output)
+    for tensor in 
+    grad_input = recursive_mean(grad_input)
+    grad_output = recursive_mean(grad_output)
     print(f"module: {module}")
     print(f"grad_output: {grad_output}")
     print(f"grad_input: {grad_input}")
@@ -54,16 +61,16 @@ sizeInput = torch.from_numpy(np.array((256, 256, widthZ)))
 sizeOutput = torch.from_numpy(np.array((256, 256, widthZ)))
 model.add_module("linear", nn.Linear(in_features = 256, out_features = 256))
 
-model.vit.register_backward_hook(hook_backward_fn)
-model.encoder1.register_backward_hook(hook_backward_fn)
-model.encoder2.register_backward_hook(hook_backward_fn)
-model.encoder3.register_backward_hook(hook_backward_fn)
-model.encoder4.register_backward_hook(hook_backward_fn)
-model.decoder2.register_backward_hook(hook_backward_fn)
-model.decoder3.register_backward_hook(hook_backward_fn)
-model.decoder4.register_backward_hook(hook_backward_fn)
-model.decoder5.register_backward_hook(hook_backward_fn)
-model.out.register_backward_hook(hook_backward_fn)
+model.vit.register_full_backward_hook(hook_backward_fn)
+model.encoder1.register_full_backward_hook(hook_backward_fn)
+model.encoder2.register_full_backward_hook(hook_backward_fn)
+model.encoder3.register_full_backward_hook(hook_backward_fn)
+model.encoder4.register_full_backward_hook(hook_backward_fn)
+model.decoder2.register_full_backward_hook(hook_backward_fn)
+model.decoder3.register_full_backward_hook(hook_backward_fn)
+model.decoder4.register_full_backward_hook(hook_backward_fn)
+model.decoder5.register_full_backward_hook(hook_backward_fn)
+model.out.register_full_backward_hook(hook_backward_fn)
 
 
 model.half().to(device)
