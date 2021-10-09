@@ -11,11 +11,11 @@ import os
 from monai.networks.nets import UNETR
 from torch.nn import Linear
 
-def recursive_mean(input):
-    if input is torch.Tensor:
-        return torch.mean(input)
+def recursive_mean(inputUnknown):
+    if inputUnknown is torch.Tensor:
+        return torch.mean(inputUnknown)
     else:
-        return (recursive_mean(sub) for sub in input)
+        return (recursive_mean(sub) for sub in inputUnknown if True)
 
 def hook_backward_fn(module, grad_input, grad_output):
     for tensor in 
