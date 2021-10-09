@@ -89,10 +89,10 @@ for idz in range(lz//widthZ):
     if cntBatch == batch_size:
         
         print(">>>>>> input X: mean ", np.mean(inputBatchX), " std ", np.std(inputBatchX))
-        print(">>>>>> input Y: mean ", np.mean(inputBatchY), " std ", np.std(inputBatchY))
+        print(">>>>>> input Y: mean ", np.mean(inputBatchX), " std ", np.std(inputBatchX))
 
         realInputX = torch.from_numpy(inputBatchX).half().to(device)
-        realInputY = torch.from_numpy(inputBatchY).half().to(device)
+        realInputY = torch.from_numpy(inputBatchX).half().to(device)
         realOutput = model(realInputX)
         print("==>Output shape: ", realOutput.size())
         optimizer.zero_grad()
