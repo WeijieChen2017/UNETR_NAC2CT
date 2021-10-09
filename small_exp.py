@@ -82,7 +82,7 @@ for idz in range(lz//widthZ):
     inputBatchY[cntBatch, :, :, :, :] = sliceBatchY
     cntBatch += 1
 
-    if cntBatch == 16:
+    if cntBatch == batch_size:
         
         realInputX = torch.from_numpy(inputBatchX).half().to(device)
         realInputY = torch.from_numpy(inputBatchY).half().to(device)
