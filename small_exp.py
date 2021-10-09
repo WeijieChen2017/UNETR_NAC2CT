@@ -25,7 +25,7 @@ def normY(data):
 
 batch_size = 16
 loss_batch_cnt = 16
-widthZ = 8
+widthZ = 16
 
 
 device = torch.device("cuda")
