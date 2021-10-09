@@ -97,8 +97,12 @@ for idz in range(lz//widthZ):
         print("==>Output shape: ", realOutput.size())
         optimizer.zero_grad()
         loss = criterion(realOutput, realInputY)
+        print(loss.data)
+        print(loss.grad)
         loss.backward()
+        print(loss.grad)
         optimizer.step()
+        print(loss.grad)
         loss_voxel = loss.item()
 
         loss_mean = np.mean(loss_voxel)
