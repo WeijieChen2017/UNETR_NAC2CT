@@ -12,11 +12,11 @@ from monai.networks.nets import UNETR
 from torch.nn import Linear
 
 def recursive_mean(inputUnknown):
-    if type(inputUnknown) is torch.Tensor:
-        return torch.mean(inputUnknown)
+    if torch.is_tensor(inputUnknown):
         print("==>", type(inputUnknown))
+        return torch.mean(inputUnknown)
     else:
-        print("@@", type(inputUnknown))
+        # print("@@", type(inputUnknown))
         results = []
         for sub in inputUnknown:
             print("==/", end="")
