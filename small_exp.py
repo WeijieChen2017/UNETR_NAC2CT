@@ -18,7 +18,7 @@ def normX(data):
 # try to load one data
 filePET = nib.load("./dataset/sctTr/CUB_011.nii.gz")
 idx = 496
-dataPET = filePET.get_fdata()[:, :, idx-2:idx+2]
+dataPET = filePET.get_fdata()[:, :, idx-4:idx+4]
 # dataPET = filePET.get_fdata()[:, :, -512:]
 hx, hy, hz = dataPET.shape
 lx, ly, lz = hx//2, hy//2, hz//1
