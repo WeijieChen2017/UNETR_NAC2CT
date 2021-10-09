@@ -46,10 +46,10 @@ filePET = nib.load("./dataset/sctTr/CUB_011.nii.gz")
 # dataPET = filePET.get_fdata()[:, :, idx-8:idx+8]
 dataPET = filePET.get_fdata()[:, :, -512:]
 normPET = normX(dataPET)
-normPET = np.expand_dims(normPET, axis=(0, 1))
 hx, hy, hz = normPET.shape
 lx, ly, lz = hx//2, hy//2, hz//2
 normPET = np.resize(normPET, (lx, ly, lz))
+normPET = np.expand_dims(normPET, axis=(0, 1))
 print(normPET.shape)
 
 cntBatch = 0
