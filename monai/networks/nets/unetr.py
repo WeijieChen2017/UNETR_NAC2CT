@@ -81,7 +81,7 @@ class UNETR(nn.Module):
         self.num_layers = 12
         img_size = ensure_tuple_rep(img_size, spatial_dims)
         # self.patch_size = ensure_tuple_rep(8, spatial_dims)
-        self.patch_size = (16, 16, 8)
+        self.patch_size = (16, 16, 16)
         self.feat_size = tuple(img_d // p_d for img_d, p_d in zip(img_size, self.patch_size))
         self.hidden_size = hidden_size
         self.classification = False
