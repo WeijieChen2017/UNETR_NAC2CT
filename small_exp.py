@@ -81,15 +81,15 @@ lenData = lz // widthZ
 for idz in range(lz//widthZ):
     sliceBatchX = normPET[:, :, :, :, idz*widthZ : (idz+1)*widthZ]
     sliceBatchY = normSCT[:, :, :, :, idz*widthZ : (idz+1)*widthZ]
-    # print(sliceBatchX.shape, sliceBatchY.shape)
+    print(">>>>>> sliceBatchX: mean ", np.mean(sliceBatchX), " std ", np.std(sliceBatchX))
+    print(">>>>>> sliceBatchY: mean ", np.mean(sliceBatchY), " std ", np.std(sliceBatchY))
     inputBatchX[cntBatch, :, :, :, :] = sliceBatchX
     inputBatchY[cntBatch, :, :, :, :] = sliceBatchY
     cntBatch += 1
 
     if cntBatch == batch_size:
-        
-        print(">>>>>> input X: mean ", np.mean(inputBatchX), " std ", np.std(inputBatchX))
-        print(">>>>>> input Y: mean ", np.mean(inputBatchX), " std ", np.std(inputBatchX))
+        print(">>>>>> inputBatchX: mean ", np.mean(inputBatchX), " std ", np.std(inputBatchX))
+        print(">>>>>> inputBatchY: mean ", np.mean(inputBatchY), " std ", np.std(inputBatchY))
 
         realInputX = torch.from_numpy(inputBatchX).half().to(device)
         realInputY = torch.from_numpy(inputBatchX).half().to(device)
@@ -116,6 +116,7 @@ for idz in range(lz//widthZ):
         #     print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
 
         cntBatch = 0
+        print("&"*60)
 
 
 
