@@ -12,6 +12,8 @@ from monai.networks.nets import UNETR
 from torch.nn import Linear
 
 def hook_backward_fn(module, grad_input, grad_output):
+    grad_input = torch.mean(grad_input)
+    grad_output = grad_input(grad_output)
     print(f"module: {module}")
     print(f"grad_output: {grad_output}")
     print(f"grad_input: {grad_input}")
@@ -120,7 +122,7 @@ for idz in range(lz//widthZ):
         optimizer.step()
 
         print("@"*60)
-        print(model.Parameter())
+        print(model.Parameters())
         # print(model.)
         print("@"*60)
 
