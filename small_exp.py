@@ -42,8 +42,8 @@ model = UNETR(
     res_block=True,
     dropout_rate=0.0,
 )
-model.add_module("linear", nn.Linear(in_features = 256,
-                                     out_features = opt.block_size))
+model.add_module("linear", nn.Linear(in_features = (256, 256, widthZ),
+                                     out_features = (256, 256, widthZ))
 model.half().to(device)
 
 criterion = nn.HuberLoss()
