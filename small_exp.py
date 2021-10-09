@@ -19,7 +19,7 @@ def recursive_mean(inputUnknown):
         # print("@@", type(inputUnknown))
         results = []
         for sub in inputUnknown:
-            print("==", type(sub), "==/"end="")
+            print("==", type(sub), "==/", end="")
             results.append(recursive_mean(sub))
         # return (recursive_mean(sub) for sub in inputUnknown)
         return results
