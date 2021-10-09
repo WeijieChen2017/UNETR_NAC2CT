@@ -74,8 +74,8 @@ lenData = lz // widthZ
 # loss_batch = np.zeros((loss_batch_cnt))
 
 for idz in range(lz//widthZ):
-    sliceBatchX = normPET[:, :, :, :, idz*widthZ : idz*8+widthZ]
-    sliceBatchY = normSCT[:, :, :, :, idz*widthZ : idz*8+widthZ]
+    sliceBatchX = normPET[:, :, :, :, idz*widthZ : (idz+1)*widthZ]
+    sliceBatchY = normSCT[:, :, :, :, idz*widthZ : (idz+1)*widthZ]
     inputBatchX[cntBatch, :, :, :, :] = sliceBatchX
     inputBatchY[cntBatch, :, :, :, :] = sliceBatchY
     cntBatch += 1
