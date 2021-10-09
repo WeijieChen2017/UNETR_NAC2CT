@@ -33,7 +33,7 @@ model = UNETR(
     in_channels=1,
     out_channels=1,
     img_size=(256, 256, widthZ),
-    feature_size=256,
+    feature_size=128,
     hidden_size=4096,
     mlp_dim=4096,
     num_heads=16,
@@ -77,7 +77,7 @@ lenData = lz // widthZ
 for idz in range(lz//widthZ):
     sliceBatchX = normPET[:, :, :, :, idz*widthZ : (idz+1)*widthZ]
     sliceBatchY = normSCT[:, :, :, :, idz*widthZ : (idz+1)*widthZ]
-    print(sliceBatchX.shape, sliceBatchY.shape)
+    # print(sliceBatchX.shape, sliceBatchY.shape)
     inputBatchX[cntBatch, :, :, :, :] = sliceBatchX
     inputBatchY[cntBatch, :, :, :, :] = sliceBatchY
     cntBatch += 1
