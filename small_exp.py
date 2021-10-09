@@ -41,11 +41,14 @@ model = UNETR(
     norm_name="instance",
     res_block=True,
     dropout_rate=0.0,
-).half().to(device)
+)
+model.add_module("linear", nn.Linear(in_features = 256,
+                                     out_features = opt.block_size))
+model.half().to(device)
 
 criterion = nn.HuberLoss()
 torch.backends.cudnn.benchmark = True
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-5)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-5)
 model.train()
 
 
@@ -90,7 +93,7 @@ for idz in range(lz//widthZ):
         loss = criterion(model(realInputX), realInputY)
         loss.backward()
         optimizer.step()
-        loss_voxel = loss.item() / (lx*ly*widthZ)
+        loss_voxel = loss.item()
 
         loss_mean = np.mean(loss_voxel)
         loss_std = np.std(loss_voxel)
