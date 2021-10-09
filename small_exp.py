@@ -23,7 +23,7 @@ def normY(data):
     data = (data + 1000) / 4000
     return data
 
-batch_size = 8
+batch_size = 4
 # loss_batch_cnt = 16
 widthZ = 16
 
