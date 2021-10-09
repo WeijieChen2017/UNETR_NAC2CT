@@ -186,58 +186,58 @@ class UNETR(nn.Module):
         x = x.view(new_view)
         new_axes = (0, len(x.shape) - 1) + tuple(d + 1 for d in range(len(feat_size)))
         x = x.permute(new_axes).contiguous()
-        print("==>", hidden_size, feat_size, new_view, new_axes)
+        # print("==>", hidden_size, feat_size, new_view, new_axes)
         return x
 
     def forward(self, x_in):
 
 
-        print("-"*60)
-        for module in [self.vit, self.encoder1, self.encoder2, self.encoder3, self.encoder4,
-                       self.decoder2, self.decoder3, self.decoder4, self.decoder5]:
-            for para in module.parameters():
-                print(para.size())
-            print("*"*30)
-        print("-"*60)
+        # print("-"*60)
+        # for module in [self.vit, self.encoder1, self.encoder2, self.encoder3, self.encoder4,
+        #                self.decoder2, self.decoder3, self.decoder4, self.decoder5]:
+        #     for para in module.parameters():
+        #         print(para.size())
+        #     print("*"*30)
+        # print("-"*60)
 
 
 
-        print("x_in", x_in.size())
+        # print("x_in", x_in.size())
         x, hidden_states_out = self.vit(x_in)
-        print("x", x.size())
-        print("hidden_states_out  ", end="")
-        for tensor in hidden_states_out:
-            print(tensor.size(), "   ", end="")
-        print("   ")
+        # print("x", x.size())
+        # print("hidden_states_out  ", end="")
+        # for tensor in hidden_states_out:
+        #     print(tensor.size(), "   ", end="")
+        # print("   ")
         enc1 = self.encoder1(x_in)
-        print("enc1", enc1.size())
+        # print("enc1", enc1.size())
         x2 = hidden_states_out[3]
-        print("x2", x2.size(), end="")
+        # print("x2", x2.size(), end="")
         x2_flat = self.proj_feat(x2, self.hidden_size, self.feat_size)
-        print("x2_flat", x2_flat.size())
+        # print("x2_flat", x2_flat.size())
         enc2 = self.encoder2(x2_flat)
-        print("enc2", enc2.size())
+        # print("enc2", enc2.size())
         x3 = hidden_states_out[6]
-        print("x3", x3.size(), end="")
+        # print("x3", x3.size(), end="")
         x3_flat = self.proj_feat(x3, self.hidden_size, self.feat_size)
-        print("x3_flat", x3_flat.size())
+        # print("x3_flat", x3_flat.size())
         enc3 = self.encoder3(x3_flat)
-        print("enc3", enc3.size())
+        # print("enc3", enc3.size())
         x4 = hidden_states_out[9]
-        print("x4", x4.size(), end="")
+        # print("x4", x4.size(), end="")
         x4_flat = self.proj_feat(x4, self.hidden_size, self.feat_size)
-        print("x4_flat", x4_flat.size())
+        # print("x4_flat", x4_flat.size())
         enc4 = self.encoder4(x4_flat)
-        print("enc4", enc4.size())
+        # print("enc4", enc4.size())
 
         dec4 = self.proj_feat(x, self.hidden_size, self.feat_size)
-        print("dec4", dec4.size())
+        # print("dec4", dec4.size())
         dec3 = self.decoder5(dec4, enc4)
-        print("dec3", dec3.size())
+        # print("dec3", dec3.size())
         dec2 = self.decoder4(dec3, enc3)
-        print("dec2", dec2.size())
+        # print("dec2", dec2.size())
         dec1 = self.decoder3(dec2, enc2)
-        print("dec1", dec1.size())
+        # print("dec1", dec1.size())
         out = self.decoder2(dec1, enc1)
-        print("out", out.size())
+        # print("out", out.size())
         return self.out(out)
