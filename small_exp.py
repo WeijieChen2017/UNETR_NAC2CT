@@ -14,8 +14,14 @@ from torch.nn import Linear
 def recursive_mean(inputUnknown):
     if inputUnknown is torch.Tensor:
         return torch.mean(inputUnknown)
+        print("==>", inputUnknown.type())
     else:
-        return (recursive_mean(sub) for sub in inputUnknown)
+        results = []
+        for sub in inputUnknown:
+            print("==/", end="")
+            results.append(recursive_mean(sub))
+        # return (recursive_mean(sub) for sub in inputUnknown)
+        return results
 
 def hook_backward_fn(module, grad_input, grad_output):
     grad_input = recursive_mean(grad_input)
@@ -127,10 +133,10 @@ for idz in range(lz//widthZ):
         loss.backward()
         optimizer.step()
 
-        print("@"*60)
-        print(model.Parameters())
+        # print("@"*60)
+        # print(model.Parameters())
         # print(model.)
-        print("@"*60)
+        # print("@"*60)
 
 
         loss_voxel = loss.item()
