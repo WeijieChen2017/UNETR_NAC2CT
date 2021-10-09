@@ -96,6 +96,7 @@ for idz in range(lz//widthZ):
         loss = criterion(realOutput, realInputY)
         loss.backward()
         optimizer.step()
+        optimizer.zero_grad()
         loss_voxel = loss.item()
 
         loss_mean = np.mean(loss_voxel)
