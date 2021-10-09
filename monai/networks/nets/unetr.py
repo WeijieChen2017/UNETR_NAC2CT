@@ -185,6 +185,7 @@ class UNETR(nn.Module):
         x = x.view(new_view)
         new_axes = (0, len(x.shape) - 1) + tuple(d + 1 for d in range(len(feat_size)))
         x = x.permute(new_axes).contiguous()
+        print("==>", hidden_size, feat_size, new_view, new_axes)
         return x
 
     def forward(self, x_in):
