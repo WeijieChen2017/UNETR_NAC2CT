@@ -49,7 +49,7 @@ model.half().to(device)
 
 criterion = nn.HuberLoss()
 torch.backends.cudnn.benchmark = True
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-5)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-6, weight_decay=1e-5)
 model.train()
 
 
