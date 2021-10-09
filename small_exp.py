@@ -53,9 +53,9 @@ normPET = np.expand_dims(normPET, axis=(0, 1))
 print(normPET.shape)
 
 cntBatch = 0
-inputBatch = np.zeros((batch_size, 1, hx, hy, 8))
+inputBatch = np.zeros((batch_size, 1, lx, ly, 8))
 
-for idz in range(hz//8):
+for idz in range(lz//8):
 	sliceBatch = normPET[:, :, :, :, idz*8 : idz*8+8]
 	print(sliceBatch.shape)
 	inputBatch[cntBatch, :, :, :, :] = sliceBatch
