@@ -98,7 +98,8 @@ for idz in range(lz//widthZ):
 
         loss_mean = np.mean(loss_voxel)
         loss_std = np.std(loss_voxel)
-        print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
+        print("==>", loss_voxel)
+        print("==>==>Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
 
         # loss_batch[iteration % loss_batch_cnt] = loss_voxel
         # epoch_loss[iteration] = loss_voxel
