@@ -17,9 +17,9 @@ def normX(data):
 
 # try to load one data
 filePET = nib.load("./dataset/sctTr/CUB_011.nii.gz")
-dataPET = filePET.get_fdata()[:, :, -512:]
+dataPET = filePET.get_fdata()[:, :, 496]
 hx, hy, hz = dataPET.shape
-lx, ly, lz = hx//8, hy//8, hz//8
+lx, ly, lz = hx//1, hy//1, hz//1
 dataPET = np.resize(dataPET, (lx, ly, lz))
 normPET = normX(dataPET)
 normPET = np.expand_dims(normPET, axis=(0, 1))
@@ -35,8 +35,8 @@ model = UNETR(
     in_channels=1,
     out_channels=1,
     img_size=(lx, ly, lz),
-    feature_size=16,
-    hidden_size=1024,
+    feature_size=32,
+    hidden_size=768,
     mlp_dim=1024,
     num_heads=16,
     pos_embed="perceptron",
