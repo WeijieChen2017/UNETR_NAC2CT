@@ -43,7 +43,7 @@ model = UNETR(
     dropout_rate=0.0,
 ).half().to(device)
 
-loss_function = DiceCELoss(to_onehot_y=True, softmax=True)
+criterion = nn.HuberLoss()
 torch.backends.cudnn.benchmark = True
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-5)
 model.train()
@@ -85,7 +85,7 @@ for idz in range(lz//widthZ):
         realInputX = torch.from_numpy(inputBatchX).half().to(device)
         realInputY = torch.from_numpy(inputBatchY).half().to(device)
         optimizer.zero_grad()
-        loss = criterion(model(batch_x), batch_y)
+        loss = criterion(model(realInputX), realInputY)
         loss.backward()
         optimizer.step()
         loss_voxel = loss.item() / (lx*ly*widthZ)
