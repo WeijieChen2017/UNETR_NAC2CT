@@ -9,7 +9,9 @@ import time
 import os
 
 from monai.networks.nets import UNETR
+from monai.networks.blocks.unetr_block import UnetrBasicBlock
 from torch.nn import Linear
+
 
 def recursive_mean(inputUnknown):
     if torch.is_tensor(inputUnknown):
@@ -26,7 +28,7 @@ def recursive_mean(inputUnknown):
 
 def hook_backward_fn(module, grad_input, grad_output):
 
-    if type(module) is netrBasicBlock:
+    if type(module) is UnetrBasicBlock:
         print(f"grad_output: {grad_output}")
         print(f"grad_input: {grad_input}")
     else:
