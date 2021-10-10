@@ -10,6 +10,7 @@ import os
 
 from monai.networks.nets import UNETR
 from monai.networks.blocks.unetr_block import UnetrBasicBlock
+from monai.networks.nets.vit import ViT
 from torch.nn import Linear
 
 
@@ -32,7 +33,8 @@ def hook_backward_fn(module, grad_input, grad_output):
         print(f"grad_output: {grad_output}")
         print(f"grad_input: {grad_input}")
     else:
-        print(f"module: {module}")
+        if type(module) is not ViT:
+            print(f"module: {module}")
         grad_output = recursive_mean(grad_output)
         grad_input = recursive_mean(grad_input)
         print(f"grad_output: {grad_output}")
