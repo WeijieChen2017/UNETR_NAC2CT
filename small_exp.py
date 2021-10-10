@@ -41,6 +41,10 @@ def hook_backward_fn(module, grad_input, grad_output):
             print(f"grad_output: {grad_output}")
             print(f"grad_input: {grad_input}")
             print("*"*20)
+        else:
+            print(f"grad_output: {grad_output}")
+            print(f"grad_input: {grad_input}")
+            print("*"*20)
 
 def normX(data):
     data[data<0] = 0
