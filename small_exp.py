@@ -30,8 +30,9 @@ def recursive_mean(inputUnknown):
 def hook_backward_fn(module, grad_input, grad_output):
 
     if type(module) is UnetrBasicBlock:
-        print(f"grad_output: {grad_output}")
-        print(f"grad_input: {grad_input}")
+        # print(f"grad_output: {grad_output}")
+        # print(f"grad_input: {grad_input}")
+        print("Unknown")
     else:
         if type(module) is not ViT:
             print(f"module: {module}")
