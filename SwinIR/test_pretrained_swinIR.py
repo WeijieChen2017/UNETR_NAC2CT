@@ -40,7 +40,7 @@ def volume2slice(data, save_folder):
 # img_lq = np.load(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}')
 
 list_sCT = []
-for filename in ["./CUB_011.nii.gz", "./RSZ_2x.nii.gz", "./RSZ_4x.nii.gz", "./RSZ_8x.nii.gz"]
+for filename in ["./CUB_011.nii.gz", "./RSZ_2x.nii.gz", "./RSZ_4x.nii.gz", "./RSZ_8x.nii.gz"]:
     file_sCT = nib.load(filename)
     data_sCT = file_sCT.get_fdata()
     list_sCT.append(normY(data_sCT))
