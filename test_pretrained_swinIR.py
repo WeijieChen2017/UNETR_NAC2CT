@@ -26,7 +26,7 @@ def volume2slice(data, save_folder):
         img[:, :, 0] = data[:, :, idx_set[0]]
         img[:, :, 1] = data[:, :, idx_set[1]]
         img[:, :, 2] = data[:, :, idx_set[2]]
-        np.save(save_folder+"_CT011_{:03d}.npy".format(idx), img)
+        np.save(save_folder+"CT_011_{:03d}.npy".format(idx), img)
         print("Save imgs in "+save_folder+" [{:03d}]/[{:03d}]".format(idx+1, dz+1))
 
 
