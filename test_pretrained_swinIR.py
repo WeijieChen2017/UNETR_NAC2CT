@@ -38,6 +38,7 @@ ratio = 4
 file_sCT = nib.load("./dataset/sctTr/CUB_011.nii.gz")
 data_sCT = file_sCT.get_fdata()[:, :, :]
 norm_sCT = normY(data_sCT)
+hx, hy, hz = norm_sCT.shape
 lx, ly, lz = hx//ratio, hy//ratio, hz//ratio
 resz_sCT = np.resize(norm_sCT, (lx, ly, lz))
 print(norm_sCT.shape, resz_sCT)
