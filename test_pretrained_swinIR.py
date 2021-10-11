@@ -26,8 +26,8 @@ def volume2slice(data, save_folder):
         img[:, :, 0] = data[:, :, idx_set[0]]
         img[:, :, 1] = data[:, :, idx_set[1]]
         img[:, :, 2] = data[:, :, idx_set[2]]
-        np.save(save_folder+"_CT011_{:3d}.npy".format(idx), img)
-        print("Save imgs in "+save_folder+" [{:3d}]/[{:3d}]".format(idx+1, dz+1))
+        np.save(save_folder+"_CT011_{:03d}.npy".format(idx), img)
+        print("Save imgs in "+save_folder+" [{:03d}]/[{:03d}]".format(idx+1, dz+1))
 
 
 # (imgname, imgext) = os.path.splitext(os.path.basename(path))
@@ -41,7 +41,7 @@ norm_sCT = normY(data_sCT)
 hx, hy, hz = norm_sCT.shape
 lx, ly, lz = hx//ratio, hy//ratio, hz
 resz_sCT = np.resize(norm_sCT, (lx, ly, lz))
-print(norm_sCT.shape, resz_sCT)
+print(norm_sCT.shape, resz_sCT.shape)
 
 volume2slice(norm_sCT, "./test/CT/HR/")
 volume2slice(resz_sCT, "./test/CT/LR/")
