@@ -1,6 +1,9 @@
 # python main_test_swinir.py --task classical_sr --scale 2 --training_patch_size 64 --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq testsets/Set5/LR_bicubic/X2 --folder_gt testsets/Set5/HR
 
-# 3dresample -dxyz 1.367 1.367 1.367 -prefix CUB_011.nii.gz -input CT_011.nii.gz
+# 3dresample -dxyz 2.734 2.734 1.367 -prefix RSZ_2x.nii.gz -input CUB_011.nii.gz
+# 3dresample -dxyz 5.468 5.468 1.367 -prefix RSZ_4x.nii.gz -input CUB_011.nii.gz
+# 3dresample -dxyz 10.936 10.936 1.367 -prefix RSZ_8x.nii.gz -input CUB_011.nii.gz
+
 import nibabel as nib
 import numpy as np
 import time
@@ -41,9 +44,9 @@ file_sCT = nib.load("./CUB_011.nii.gz")
 data_sCT = file_sCT.get_fdata()
 hr_sCT = normY(data_sCT)
 
-file_sCT = nib.load("./RSZ_011.nii.gz")
+file_sCT = nib.load("./RSZ_2x.nii.gz")
 data_sCT = file_sCT.get_fdata()
-lr_sCT = norm(data_sCT)
+lr_sCT = normY(data_sCT)
 # hx, hy, hz = norm_sCT.shape
 # lx, ly, lz = hx//ratio, hy//ratio, hz
 # resz_sCT = np.resize(norm_sCT, (lx, ly, lz))
