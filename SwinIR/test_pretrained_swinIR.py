@@ -3,6 +3,7 @@
 # 3dresample -dxyz 1.367 1.367 1.367 -prefix CUB_011.nii.gz -input CT_011.nii.gz
 import nibabel as nib
 import numpy as np
+import time
 import os
 
 def normY(data):
@@ -37,15 +38,20 @@ def volume2slice(data, save_folder):
 
 ratio = 2
 file_sCT = nib.load("./CUB_011.nii.gz")
-data_sCT = file_sCT.get_fdata()[:, :, :]
-norm_sCT = normY(data_sCT)
-hx, hy, hz = norm_sCT.shape
-lx, ly, lz = hx//ratio, hy//ratio, hz
-resz_sCT = np.resize(norm_sCT, (lx, ly, lz))
-print(norm_sCT.shape, resz_sCT.shape)
+data_sCT = file_sCT.get_fdata()
+hr_sCT = normY(data_sCT)
 
-volume2slice(norm_sCT, "./test/CT/HR/")
-volume2slice(resz_sCT, "./test/CT/LR/")
+file_sCT = nib.load("./RSZ_011.nii.gz")
+data_sCT = file_sCT.get_fdata()
+lr_sCT = norm(data_sCT)
+# hx, hy, hz = norm_sCT.shape
+# lx, ly, lz = hx//ratio, hy//ratio, hz
+# resz_sCT = np.resize(norm_sCT, (lx, ly, lz))
+print(hr_sCT.shape, lr_sCT.shape)
+time.sleep(5)
+
+volume2slice(hr_sCT, "./test/CT/HR/")
+volume2slice(lr_sCT, "./test/CT/LR/")
 
 cmd = "python main_test_swinir.py "
 cmd += "--task classical_sr --scale 2 --training_patch_size 64 "
