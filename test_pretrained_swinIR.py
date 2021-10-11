@@ -22,7 +22,7 @@ def volume2slice(data, save_folder):
     dx, dy, dz = data.shape
     img = np.zeros((dx, dy, 3))
     for idx in range(dz):
-        idx_set = get_index(idx, dz)
+        idx_set = get_index(idx, dz-1)
         img[:, :, 0] = data[:, :, idx_set[0]]
         img[:, :, 1] = data[:, :, idx_set[1]]
         img[:, :, 2] = data[:, :, idx_set[2]]
