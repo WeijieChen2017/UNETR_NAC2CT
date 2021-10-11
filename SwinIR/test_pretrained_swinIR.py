@@ -39,22 +39,21 @@ def volume2slice(data, save_folder):
 # img_gt = np.load(path)
 # img_lq = np.load(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}')
 
-ratio = 2
-file_sCT = nib.load("./CUB_011.nii.gz")
-data_sCT = file_sCT.get_fdata()
-hr_sCT = normY(data_sCT)
+list_sCT = []
+for filename in ["./CUB_011.nii.gz", "./RSZ_2x.nii.gz", "./RSZ_4x.nii.gz", "./RSZ_8x.nii.gz"]
+    file_sCT = nib.load(filename)
+    data_sCT = file_sCT.get_fdata()
+    list_sCT.append(normY(data_sCT))
 
-file_sCT = nib.load("./RSZ_2x.nii.gz")
-data_sCT = file_sCT.get_fdata()
-lr_sCT = normY(data_sCT)
-# hx, hy, hz = norm_sCT.shape
-# lx, ly, lz = hx//ratio, hy//ratio, hz
-# resz_sCT = np.resize(norm_sCT, (lx, ly, lz))
-print(hr_sCT.shape, lr_sCT.shape)
+for data in list_sCT:
+    print(data.shape, end="")
+print("======>Data is loaded.<======")
 time.sleep(5)
 
-volume2slice(hr_sCT, "./test/CT/HR/")
-volume2slice(lr_sCT, "./test/CT/LR/")
+volume2slice(list_sCT[0], "./test/CT/HR/")
+volume2slice(list_sCT[1], "./test/CT/LR_2x/")
+volume2slice(list_sCT[2], "./test/CT/LR_4x/")
+volume2slice(list_sCT[3], "./test/CT/LR_8x/")
 
 cmd = "python main_test_swinir.py "
 cmd += "--task classical_sr --scale 2 --training_patch_size 64 "
@@ -62,6 +61,6 @@ cmd += "--model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth
 cmd += "--folder_lq ./test/CT/LR/ "
 cmd += "--folder_gt ./test/CT/HR/"
 print(cmd)
-os.system(cmd)
+# os.system(cmd)
 
 # python main_test_swinir.py --task classical_sr --scale 2 --training_patch_size 64 --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq ./test/CT/LR/ --folder_gt ./test/CT/HR/
