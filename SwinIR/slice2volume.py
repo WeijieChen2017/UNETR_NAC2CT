@@ -9,19 +9,16 @@ import nibabel as nib
 import numpy as np
 import os
 
-def denormY(data):
-    return data * 4000 - 1000
-
 ratio = 2
-file_sCT = nib.load("./MAC_PET/RSZ_4x_PET.nii.gz")
+file_sCT = nib.load("./brain/brain_4x.nii.gzz")
 data_sCT = file_sCT.get_fdata()[:, :, :]
 hx, hy, hz = data_sCT.shape
 recon = np.zeros(data_sCT.shape)
 for idx in range(hz):
-    img = np.load("./results/swinir_real_sr_x4_large/PET_{:03d}_SwinIR.npy".format(idx))
+    img = np.load("./results/swinir_real_sr_x4_large/brain_{:03d}_SwinIR.npy".format(idx))
     recon[:, :, idx] = img[:, :, 1]
 
-recon = recon * 23836
+recon = recon * np.amax(data_sCT)
 pred_file = nib.Nifti1Image(recon, file_sCT.affine, file_sCT.header)
-pred_name = "./REC_PET_4x.nii.gz"
+pred_name = "./REC_brain_4x.nii.gz"
 nib.save(pred_file, pred_name)
