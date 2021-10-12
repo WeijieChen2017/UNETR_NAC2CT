@@ -13,7 +13,7 @@ def denormY(data):
     return data * 4000 - 1000
 
 ratio = 2
-file_sCT = nib.load("./sCT_011/CUB_011.nii")
+file_sCT = nib.load("./sCT_011/CUB_011.nii.gz")
 data_sCT = file_sCT.get_fdata()[:, :, :]
 hx, hy, hz = data_sCT.shape
 recon = np.zeros(data_sCT.shape)
