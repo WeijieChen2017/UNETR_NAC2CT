@@ -15,6 +15,9 @@ def normY(data):
     data = (data + 1000) / 4000
     return data
 
+def normX(data):
+    return data / np.amax(data)
+
 def get_index(current_idx, max_idx):
     if current_idx == 0:
         return [0, 0, 1]
@@ -31,7 +34,7 @@ def volume2slice(data, save_folder):
         img[:, :, 0] = data[:, :, idx_set[0]]
         img[:, :, 1] = data[:, :, idx_set[1]]
         img[:, :, 2] = data[:, :, idx_set[2]]
-        np.save(save_folder+"CT_011_{:03d}.npy".format(idx), img)
+        np.save(save_folder+"PET_011_{:03d}.npy".format(idx), img)
         print("Save imgs in "+save_folder+" [{:03d}]/[{:03d}]".format(idx+1, dz+1))
 
 
@@ -40,27 +43,33 @@ def volume2slice(data, save_folder):
 # img_lq = np.load(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}')
 
 list_sCT = []
-for filename in ["./CUB_011.nii.gz", "./RSZ_2x.nii.gz", "./RSZ_4x.nii.gz", "./RSZ_8x.nii.gz"]:
+for filename in ["./MAC_PET.nii"]:
     file_sCT = nib.load(filename)
     data_sCT = file_sCT.get_fdata()
-    list_sCT.append(normY(data_sCT))
+    list_sCT.append(normX(data_sCT))
 
 for data in list_sCT:
     print(data.shape, end="")
 print("======>Data is loaded.<======")
 time.sleep(5)
 
-volume2slice(list_sCT[0], "./test/CT/HR/")
-volume2slice(list_sCT[1], "./test/CT/LR_2x/")
-volume2slice(list_sCT[2], "./test/CT/LR_4x/")
-volume2slice(list_sCT[3], "./test/CT/LR_8x/")
+save_dir = "./test/PET/LR/"
+if not os.path.exists(save_dir):
+    os.makedirs(save_dir)
 
-cmd = "python main_test_swinir.py "
-cmd += "--task classical_sr --scale 2 --training_patch_size 64 "
-cmd += "--model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth "
-cmd += "--folder_lq ./test/CT/LR/ "
-cmd += "--folder_gt ./test/CT/HR/"
+volume2slice(list_sCT[0], save_dir)
+# volume2slice(list_sCT[1], "./test/CT/LR_2x/")
+# volume2slice(list_sCT[2], "./test/CT/LR_4x/")
+# volume2slice(list_sCT[3], "./test/CT/LR_8x/")
+
+# cmd = "python main_test_swinir.py "
+# cmd += "--task classical_sr --scale 2 --training_patch_size 64 "
+# cmd += "--model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth "
+# cmd += "--folder_lq ./test/CT/LR/ "
+# cmd += "--folder_gt ./test/CT/HR/"
+cmd = "python main_test_swinir.py --task real_sr --scale 4 --large_model --model_path model_zoo/swinir/003_realSR_BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth --folder_lq testsets/RealSRSet+5images"
 print(cmd)
 # os.system(cmd)
 
+# python main_test_swinir.py --task real_sr --scale 4 --large_model --model_path model_zoo/swinir/003_realSR_BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth --folder_lq testsets/RealSRSet+5images
 # python main_test_swinir.py --task classical_sr --scale 2 --training_patch_size 64 --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq ./test/CT/LR/ --folder_gt ./test/CT/HR/
