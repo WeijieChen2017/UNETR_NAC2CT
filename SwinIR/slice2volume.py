@@ -14,8 +14,10 @@ file_sCT = nib.load("./brain/brain_4x.nii.gz")
 data_sCT = file_sCT.get_fdata()[:, :, :]
 hx, hy, hz = data_sCT.shape
 recon = np.zeros(data_sCT.shape)
+print(recon.shape)
 for idx in range(hz):
     img = np.load("./results/swinir_real_sr_x4_large/brain_{:03d}_SwinIR.npy".format(idx))
+    print(img.shape)
     recon[:, :, idx] = np.resize(np.squeeze(img[:, :, 1]), (hx, hy)) 
 
 recon = recon * np.amax(data_sCT)
