@@ -7,6 +7,7 @@
 # 3dresample -dxyz 1.367 1.367 1.367 -prefix CUB_011.nii.gz -input CT_011.nii.gz
 import nibabel as nib
 import numpy as np
+import cv2
 import os
 
 ratio = 2
@@ -19,7 +20,8 @@ for idx in range(hz):
     img = np.load("./results/swinir_real_sr_x4_large/brain_{:03d}_SwinIR.npy".format(idx))
     img = img[:, :, 1]
     print(img.shape)
-    recon[:, :, idx] = np.resize(np.squeeze(img), (hx, hy)) 
+    # recon[:, :, idx] = np.resize(img, (hx, hy)) 
+    recon[:, :, idx] = cv2.resize(src, (hx, hy))
 
 recon = recon * np.amax(data_sCT)
 pred_file = nib.Nifti1Image(recon, file_sCT.affine, file_sCT.header)
