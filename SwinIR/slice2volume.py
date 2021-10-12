@@ -21,7 +21,7 @@ for idx in range(hz):
     img = np.load("./results/swinir_classical_sr_x2/PET_011_{:03d}_SwinIR.npy".format(idx))
     recon[:, :, idx] = img[:, :, 1]
 
-recon = denormY(recon)
+recon = recon * 15884
 pred_file = nib.Nifti1Image(recon, file_sCT.affine, file_sCT.header)
 pred_name = "./REC_PET.nii.gz"
 nib.save(pred_file, pred_name)

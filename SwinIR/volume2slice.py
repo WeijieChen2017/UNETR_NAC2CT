@@ -3,6 +3,7 @@
 # 3dresample -dxyz 2.734 2.734 1.367 -prefix RSZ_2x.nii.gz -input CUB_011.nii.gz
 # 3dresample -dxyz 5.468 5.468 1.367 -prefix RSZ_4x.nii.gz -input CUB_011.nii.gz
 # 3dresample -dxyz 10.936 10.936 1.367 -prefix RSZ_8x.nii.gz -input CUB_011.nii.gz
+# 3dresample -dxyz 0.664 0.664 3 -prefix RSZ_PET.nii.gz -input MAC_PET.nii.gz
 
 import nibabel as nib
 import numpy as np
@@ -43,7 +44,7 @@ def volume2slice(data, save_folder):
 # img_lq = np.load(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}')
 
 list_sCT = []
-for filename in ["./MAC_PET.nii"]:
+for filename in ["./MAC_PET/RSZ_PET.nii"]:
     file_sCT = nib.load(filename)
     data_sCT = file_sCT.get_fdata()
     list_sCT.append(normX(data_sCT))
@@ -53,7 +54,7 @@ for data in list_sCT:
 print("======>Data is loaded.<======")
 time.sleep(5)
 
-save_dir = "./test/PET/LR/"
+save_dir = "./test/PET/HR/"
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 
@@ -71,5 +72,5 @@ cmd = "python main_test_swinir.py --task real_sr --scale 2 --large_model --model
 print(cmd)
 # os.system(cmd)
 
-# python main_test_swinir.py --task real_sr --scale 4 --large_model --model_path model_zoo/swinir/003_realSR_BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth --folder_lq testsets/RealSRSet+5images
+# python main_test_swinir.py --task classical_sr --scale 2 --training_patch_size 64 --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq ./test/PET/LR/ --folder_gt ./test/CT/HR/
 # python main_test_swinir.py --task classical_sr --scale 2 --training_patch_size 64 --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq ./test/CT/LR_2x/ --folder_gt ./test/CT/HR/
