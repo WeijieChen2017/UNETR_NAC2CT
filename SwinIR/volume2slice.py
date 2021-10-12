@@ -5,6 +5,8 @@
 # 3dresample -dxyz 10.936 10.936 1.367 -prefix RSZ_8x.nii.gz -input CUB_011.nii.gz
 # 3dresample -dxyz 0.664 0.664 3 -prefix RSZ_PET.nii.gz -input MAC_PET.nii.gz
 # 3dresample -dxyz 0.332 0.332 3 -prefix RSZ_4x_PET.nii.gz -input MAC_PET.nii.gz
+# 3dresample -dxyz 0.4688 0.4688 0.6 -prefix brain_4x.nii.gz -input brain1_pet.nii.gz
+# 3dresample -dxyz 1.8752 1.8752 0.6 -prefix brain_1x.nii.gz -input brain_4x.nii.gz
 
 import nibabel as nib
 import numpy as np
@@ -46,7 +48,7 @@ def volume2slice(data, save_folder):
 # img_lq = np.load(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}')
 
 nifty_list = []
-for filename in ["./brain/brain1_pet.nii.gz"]:
+for filename in ["./brain/brain_1x.nii.gz"]:
     nifty_file = nib.load(filename)
     nifty_data = nifty_file.get_fdata()
     print("header: ", nifty_file.header)
@@ -68,7 +70,7 @@ for idx in range(len(nifty_list)):
 # cmd += "--model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth "
 # cmd += "--folder_lq ./test/CT/LR/ "
 # cmd += "--folder_gt ./test/CT/HR/"
-cmd = "python main_test_swinir.py --task real_sr --scale 2 --large_model --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq ./test/PET/LR/"
+cmd = "python main_test_swinir.py --task real_sr --scale 4 --large_model --model_path model_zoo/swinir/003_realSR_BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth --folder_lq ./test/brain/LR/"
 print(cmd)
 # os.system(cmd)
 
