@@ -57,8 +57,8 @@ for save_dir in save_list:
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-for idx in range(len(list_sCT)):
-    volume2slice(list_sCT[idx], save_list[idx])
+for idx in range(len(nifty_list)):
+    volume2slice(nifty_list[idx], save_list[idx])
 
 # cmd = "python main_test_swinir.py "
 # cmd += "--task classical_sr --scale 2 --training_patch_size 64 "
