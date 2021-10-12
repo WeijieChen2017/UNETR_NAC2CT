@@ -18,10 +18,10 @@ data_sCT = file_sCT.get_fdata()[:, :, :]
 hx, hy, hz = data_sCT.shape
 recon = np.zeros(data_sCT.shape)
 for idx in range(hz):
-    img = np.load("./results/swinir_classical_sr_x4/CT_011_{:03d}_SwinIR.npy".format(idx))
+    img = np.load("./results/swinir_classical_sr_x8/CT_011_{:03d}_SwinIR.npy".format(idx))
     recon[:, :, idx] = img[:, :, 1]
 
 recon = denormY(recon)
 pred_file = nib.Nifti1Image(recon, file_sCT.affine, file_sCT.header)
-pred_name = "REC_4x_011.nii.gz"
+pred_name = "REC_8x_011.nii.gz"
 nib.save(pred_file, pred_name)
