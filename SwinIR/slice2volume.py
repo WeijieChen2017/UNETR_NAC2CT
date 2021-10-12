@@ -21,7 +21,7 @@ for idx in range(hz):
     img = img[:, :, 1]
     print(img.shape)
     # recon[:, :, idx] = np.resize(img, (hx, hy)) 
-    recon[:, :, idx] = cv2.resize(src, (hx, hy))
+    recon[:, :, idx] = cv2.resize(img, (hx, hy))
 
 recon = recon * np.amax(data_sCT)
 pred_file = nib.Nifti1Image(recon, file_sCT.affine, file_sCT.header)
