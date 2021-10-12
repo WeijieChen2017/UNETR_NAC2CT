@@ -17,8 +17,9 @@ recon = np.zeros(data_sCT.shape)
 print(recon.shape)
 for idx in range(hz):
     img = np.load("./results/swinir_real_sr_x4_large/brain_{:03d}_SwinIR.npy".format(idx))
+    img = img[:, :, 1]
     print(img.shape)
-    recon[:, :, idx] = np.resize(np.squeeze(img[:, :, 1]), (hx, hy)) 
+    recon[:, :, idx] = np.resize(np.squeeze(img), (hx, hy)) 
 
 recon = recon * np.amax(data_sCT)
 pred_file = nib.Nifti1Image(recon, file_sCT.affine, file_sCT.header)
