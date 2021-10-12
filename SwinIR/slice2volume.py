@@ -13,15 +13,15 @@ def denormY(data):
     return data * 4000 - 1000
 
 ratio = 2
-file_sCT = nib.load("./sCT_011/CUB_011.nii.gz")
+file_sCT = nib.load("./RSZ_PET.nii")
 data_sCT = file_sCT.get_fdata()[:, :, :]
 hx, hy, hz = data_sCT.shape
 recon = np.zeros(data_sCT.shape)
 for idx in range(hz):
-    img = np.load("./results/swinir_classical_sr_x2/CT_011_{:03d}_SwinIR.npy".format(idx))
+    img = np.load("./results/swinir_classical_sr_x2/PET_011_{:03d}_SwinIR.npy".format(idx))
     recon[:, :, idx] = img[:, :, 1]
 
 recon = denormY(recon)
 pred_file = nib.Nifti1Image(recon, file_sCT.affine, file_sCT.header)
-pred_name = "./sCT_011/REC_2x_011.nii.gz"
+pred_name = "./REC_PET.nii.gz"
 nib.save(pred_file, pred_name)
