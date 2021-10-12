@@ -57,7 +57,7 @@ for save_dir in save_list:
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-for idx in range(len(list_sCT))
+for idx in range(len(list_sCT)):
     volume2slice(list_sCT[idx], save_list[idx])
 
 # cmd = "python main_test_swinir.py "
