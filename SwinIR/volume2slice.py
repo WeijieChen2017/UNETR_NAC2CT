@@ -67,7 +67,7 @@ volume2slice(list_sCT[0], save_dir)
 # cmd += "--model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth "
 # cmd += "--folder_lq ./test/CT/LR/ "
 # cmd += "--folder_gt ./test/CT/HR/"
-cmd = "python main_test_swinir.py --task real_sr --scale 4 --large_model --model_path model_zoo/swinir/003_realSR_BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth --folder_lq testsets/RealSRSet+5images"
+cmd = "python main_test_swinir.py --task real_sr --scale 2 --large_model --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq ./test/PET/LR/"
 print(cmd)
 # os.system(cmd)
 

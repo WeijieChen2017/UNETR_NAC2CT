@@ -221,13 +221,16 @@ def get_image_pair(args, path):
         # img_gt = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
         # img_lq = cv2.imread(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}', cv2.IMREAD_COLOR).astype(
         #     np.float32) / 255.
-        img_gt = np.load(path)
+        # img_gt = np.load(path)
+        img_gt = None
         img_lq = np.load(f'{args.folder_lq}/{imgname}{imgext}')
 
     # 003 real-world image sr (load lq image only)
     elif args.task in ['real_sr']:
         img_gt = None
-        img_lq = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
+        # img_lq = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
+        img_lq = np.load(f'{args.folder_lq}/{imgname}{imgext}')
+
 
     # 004 grayscale image denoising (load gt image and generate lq image on-the-fly)
     elif args.task in ['gray_dn']:
