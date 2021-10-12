@@ -35,7 +35,7 @@ def volume2slice(data, save_folder):
         img[:, :, 0] = data[:, :, idx_set[0]]
         img[:, :, 1] = data[:, :, idx_set[1]]
         img[:, :, 2] = data[:, :, idx_set[2]]
-        np.save(save_folder+"PET_011_{:03d}.npy".format(idx), img)
+        np.save(save_folder+"PET_{:03d}.npy".format(idx), img)
         print("Save imgs in "+save_folder+" [{:03d}]/[{:03d}]".format(idx+1, dz+1))
 
 
@@ -43,25 +43,22 @@ def volume2slice(data, save_folder):
 # img_gt = np.load(path)
 # img_lq = np.load(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}')
 
-list_sCT = []
-for filename in ["./MAC_PET/RSZ_PET.nii"]:
-    file_sCT = nib.load(filename)
-    data_sCT = file_sCT.get_fdata()
-    list_sCT.append(normX(data_sCT))
-
-for data in list_sCT:
-    print(data.shape, end="")
+nifty_list = []
+for filename in ["./MAC_PET/MAC_PET.nii", "./MAC_PET/RSZ_PET.nii"]:
+    nifty_file = nib.load(filename)
+    nifty_data = nifty_file.get_fdata()
+    nifty_list.append(normX(nifty_data))
+    print(nifty_data.shape)
 print("======>Data is loaded.<======")
 time.sleep(5)
 
-save_dir = "./test/PET/HR/"
-if not os.path.exists(save_dir):
-    os.makedirs(save_dir)
+save_list = ["./test/PET/LR/", "./test/PET/HR/"]
+for save_dir in save_list:
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
 
-volume2slice(list_sCT[0], save_dir)
-# volume2slice(list_sCT[1], "./test/CT/LR_2x/")
-# volume2slice(list_sCT[2], "./test/CT/LR_4x/")
-# volume2slice(list_sCT[3], "./test/CT/LR_8x/")
+for idx in range(len(list_sCT))
+    volume2slice(list_sCT[idx], save_list[idx])
 
 # cmd = "python main_test_swinir.py "
 # cmd += "--task classical_sr --scale 2 --training_patch_size 64 "
