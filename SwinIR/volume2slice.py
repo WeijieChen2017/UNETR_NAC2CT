@@ -4,6 +4,7 @@
 # 3dresample -dxyz 5.468 5.468 1.367 -prefix RSZ_4x.nii.gz -input CUB_011.nii.gz
 # 3dresample -dxyz 10.936 10.936 1.367 -prefix RSZ_8x.nii.gz -input CUB_011.nii.gz
 # 3dresample -dxyz 0.664 0.664 3 -prefix RSZ_PET.nii.gz -input MAC_PET.nii.gz
+# 3dresample -dxyz 0.332 0.332 3 -prefix RSZ_4x_PET.nii.gz -input MAC_PET.nii.gz
 
 import nibabel as nib
 import numpy as np
@@ -17,6 +18,7 @@ def normY(data):
     return data
 
 def normX(data):
+    print(np.amax(data))
     return data / np.amax(data)
 
 def get_index(current_idx, max_idx):
@@ -35,7 +37,7 @@ def volume2slice(data, save_folder):
         img[:, :, 0] = data[:, :, idx_set[0]]
         img[:, :, 1] = data[:, :, idx_set[1]]
         img[:, :, 2] = data[:, :, idx_set[2]]
-        np.save(save_folder+"PET_{:03d}.npy".format(idx), img)
+        np.save(save_folder+"brain_{:03d}.npy".format(idx), img)
         print("Save imgs in "+save_folder+" [{:03d}]/[{:03d}]".format(idx+1, dz+1))
 
 
@@ -44,15 +46,16 @@ def volume2slice(data, save_folder):
 # img_lq = np.load(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}')
 
 nifty_list = []
-for filename in ["./MAC_PET/MAC_PET.nii", "./MAC_PET/RSZ_PET.nii"]:
+for filename in ["./brain/brain1_pet.nii.gz"]:
     nifty_file = nib.load(filename)
     nifty_data = nifty_file.get_fdata()
+    print("header: ", nifty_file.header)
     nifty_list.append(normX(nifty_data))
     print(nifty_data.shape)
 print("======>Data is loaded.<======")
 time.sleep(5)
 
-save_list = ["./test/PET/LR/", "./test/PET/HR/"]
+save_list = ["./test/brain/LR/"]
 for save_dir in save_list:
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -71,3 +74,5 @@ print(cmd)
 
 # python main_test_swinir.py --task classical_sr --scale 2 --training_patch_size 64 --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq ./test/PET/LR/ --folder_gt ./test/CT/HR/
 # python main_test_swinir.py --task classical_sr --scale 2 --training_patch_size 64 --model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth --folder_lq ./test/CT/LR_2x/ --folder_gt ./test/CT/HR/
+# python main_test_swinir.py --task real_sr --scale 4 --large_model --model_path model_zoo/swinir/003_realSR_BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth --folder_lq ./test/PET/LR/
+
