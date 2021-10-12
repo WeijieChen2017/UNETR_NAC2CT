@@ -16,9 +16,9 @@ hx, hy, hz = data_sCT.shape
 recon = np.zeros(data_sCT.shape)
 for idx in range(hz):
     img = np.load("./results/swinir_real_sr_x4_large/brain_{:03d}_SwinIR.npy".format(idx))
-    recon[:, :, idx] = img[:, :, 1]
+    recon[:, :, idx] = np.resize(np.squeeze(img[:, :, 1]), (hx, hy)) 
 
 recon = recon * np.amax(data_sCT)
 pred_file = nib.Nifti1Image(recon, file_sCT.affine, file_sCT.header)
-pred_name = "./brain/REC_brain_4x.nii.gz"
+pred_name = "./brain/REC_brain_16x.nii.gz"
 nib.save(pred_file, pred_name)
