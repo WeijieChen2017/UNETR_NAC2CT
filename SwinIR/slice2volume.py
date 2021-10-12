@@ -18,7 +18,7 @@ data_sCT = file_sCT.get_fdata()[:, :, :]
 hx, hy, hz = data_sCT.shape
 recon = np.zeros(data_sCT.shape)
 for idx in range(hz):
-    img = np.load("./results/swinir_real_sr_x4_large/PET_011_{:03d}_SwinIR.npy".format(idx))
+    img = np.load("./results/swinir_real_sr_x4_large/PET_{:03d}_SwinIR.npy".format(idx))
     recon[:, :, idx] = img[:, :, 1]
 
 recon = recon * 23836
