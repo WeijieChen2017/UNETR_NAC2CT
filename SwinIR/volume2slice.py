@@ -48,7 +48,7 @@ def volume2slice(data, save_folder):
 # img_lq = np.load(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}')
 
 nifty_list = []
-for filename in ["./brain/brain_1x.nii.gz"]:
+for filename in ["./brain/brain_4x.nii.gz"]:
     nifty_file = nib.load(filename)
     nifty_data = nifty_file.get_fdata()
     print("header: ", nifty_file.header)
@@ -57,7 +57,7 @@ for filename in ["./brain/brain_1x.nii.gz"]:
 print("======>Data is loaded.<======")
 time.sleep(5)
 
-save_list = ["./test/brain/LR/"]
+save_list = ["./test/brain/HR/"]
 for save_dir in save_list:
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -70,7 +70,7 @@ for idx in range(len(nifty_list)):
 # cmd += "--model_path model_zoo/swinir/001_classicalSR_DF2K_s64w8_SwinIR-M_x2.pth "
 # cmd += "--folder_lq ./test/CT/LR/ "
 # cmd += "--folder_gt ./test/CT/HR/"
-cmd = "python main_test_swinir.py --task real_sr --scale 4 --large_model --model_path model_zoo/swinir/003_realSR_BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth --folder_lq ./test/brain/LR/"
+cmd = "python main_test_swinir.py --task real_sr --scale 4 --large_model --model_path model_zoo/swinir/003_realSR_BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth --folder_lq ./test/brain/HR/"
 print(cmd)
 # os.system(cmd)
 
