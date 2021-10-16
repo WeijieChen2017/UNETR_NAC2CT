@@ -248,10 +248,9 @@ def get_image_pair(args, path):
 
     # 005 color image denoising (load gt image and generate lq image on-the-fly)
     elif args.task in ['color_dn']:
-
-        # img_gt = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
-        # np.random.seed(seed=0)
-        # img_lq = img_gt + np.random.normal(0, args.noise / 255., img_gt.shape)
+        img_gt = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
+        np.random.seed(seed=0)
+        img_lq = img_gt + np.random.normal(0, args.noise / 255., img_gt.shape)
 
     # 006 JPEG compression artifact reduction (load gt image and generate lq image on-the-fly)
     elif args.task in ['jpeg_car']:
