@@ -10,7 +10,7 @@ import requests
 from models.network_swinir import SwinIR as net
 from utils import util_calculate_psnr_ssim as util
 
-p.random.seed(seed=813)
+np.random.seed(seed=813)
 
 def main():
     parser = argparse.ArgumentParser()
