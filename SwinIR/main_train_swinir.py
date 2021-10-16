@@ -1,6 +1,7 @@
 import argparse
 import cv2
 import glob
+import random
 import numpy as np
 from collections import OrderedDict
 import os
@@ -30,8 +31,11 @@ def main():
     parser.add_argument('--tile', type=int, default=None, help='Tile size, None for no tile during testing (testing as a whole)')
     parser.add_argument('--tile_overlap', type=int, default=32, help='Overlapping of different tiles')
     
-    parser.add_argument('--epoch', type=int, default=32, help='how many epochs to train')
+    parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
     parser.add_argument('--batch', type=int, default=32, help='how many batches in one run')
+    parser.add_argument('--loss_display_per_iter', type=int, default=3, help='display how many losses per iteration')
+    parser.add_argument('--folder_sct', type=str, default=None, help='input folder of sCT images')
+    parser.add_argument('--folder_pet', type=str, default=None, help='input folder of NAC PET images')
     
     args = parser.parse_args()
 
@@ -61,7 +65,106 @@ def main():
     test_results['psnr_b'] = []
     psnr, ssim, psnr_y, ssim_y, psnr_b = 0, 0, 0, 0, 0
 
+    criterion = nn.HuberLoss()
+    optimizer = torch.optim.AdamW(model.parameters())
+
     print(model)
+
+    sct_list = sorted(glob.glob(args.folder_sct))
+    train_loss = np.zeros((args.epoch))
+    epoch_loss = np.zeros((len(sct_list)))
+    per_iter_loss = np.zeros((args.loss_display_per_iter))
+    case_loss = None
+
+    for idx_epoch in range(args.epoch):
+
+        # randonmize training dataset
+        random.shuffle(sct_list)
+        for cnt_sct, sct_path in enumerate(sct_list):
+
+            cube_x_path = sct_path.replact("sctTr", "petTr")
+            cube_y_path = sct_path
+            cube_x_data = np.load(cube_x_path)
+            cube_y_data = np.load(cube_y_path)
+            assert cube_x_data.shape == cube_y_data.shape
+            len_z = cube_x_data.shape[2]
+            case_loss = np.zeros((len_z//args.batch))
+            input_list = list(range(len_z))
+            random.shuffle(input_list)
+
+            # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
+            for idx_iter in range(len_z//args.batch)
+
+                batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data[1]))
+                batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data[1]))
+
+                for idx_batch in range(args.batch):
+                    z_center = input_list[idx_iter*args.batch+idx_batch]
+                    z_before = z_center - 1 if z_center > 0 else 0
+                    z_after = z_center + 1 if z_center < len_z else len_z
+                    batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
+                    batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
+                    batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
+                    batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
+                    batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
+                    batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
+
+                batch_x = torch.from_numpy(batch_x).to(device)
+                batch_y = torch.from_numpy(batch_y).to(device)
+
+                optimizer.zero_grad()
+                loss = criterion(model(batch_x), batch_y)
+                loss.backward()
+                optimizer.step()
+
+                per_iter_loss[idx_iter % args.loss_display_per_iter] = loss.item()
+                case_loss[idx_iter] = loss.item()
+                if idx_iter % args.loss_display_per_iter == args.loss_display_per_iter - 1:
+                    loss_mean = np.mean(per_iter_loss)
+                    loss_std = np.std(per_iter_loss)
+                    print("===> Epoch[{}]-Case[]({}/{}): ".format(idx_epoch + 1, cnt_sct+1, iteration + 1, len_z//args.batch), end='')
+                    print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+
+                case_loss[idx_iter] = loss.item()
+            
+            # after training one case
+            loss_mean = np.mean(case_loss)
+            loss_std = np.std(case_loss)
+            print("===>===> Epoch[{}]-Case[]: ".format(idx_epoch + 1, cnt_sct+1), end='')
+            print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+            epoch_loss[cnt_sct] = loss_mean
+
+        # after training all cases
+        loss_mean = np.mean(epoch_loss)
+        loss_std = np.std(epoch_loss)
+        print("===>===>===> Epoch[{}]: ".format(idx_epoch + 1), end='')
+        print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+        train_loss[idx_epoch] = loss_mean
+
+    loss_mean = np.mean(train_loss)
+    loss_std = np.std(train_loss)
+    print("===>===>===>===>Training finished: ", end='')
+    print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     # for idx, path in enumerate(sorted(glob.glob(os.path.join(folder, '*')))):
     #     # read image
     #     imgname, img_lq, img_gt = get_image_pair(args, path)  # image to HWC-BGR, float32
