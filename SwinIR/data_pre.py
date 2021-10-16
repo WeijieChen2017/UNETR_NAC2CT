@@ -4,33 +4,6 @@ import numpy as np
 import glob
 import os
 
-from multiprocessing import Pool
-
-def save_each_nifty(folderX, folderY, pathX):
-
-    
-    return os.getpid()
-
-def create_index_3d(data, block_size, stride):
-    
-    data_size = data.shape
-    pad_width = []
-    for len_dim in data_size:
-        before_pad_width = (len_dim - len_dim // block_size * block_size) // 2
-        after_pad_width = len_dim - len_dim // block_size * block_size - before_pad_width
-        pad_width.append((before_pad_width, after_pad_width))
-    data_pad = np.pad(data, pad_width, mode = "constant")
-    
-    list_start = []
-    for len_dim in data_pad.shape:
-        list_dim = []
-        max_start = (len_dim - block_size) // stride
-        for idx in range(max_start + 1):
-            list_dim.append((idx * stride, idx * stride + block_size))
-        list_start.append(list_dim)
-    
-    return list_start, data_pad
-
 def normX(data):
     data[data<0] = 0
     data[data>3000] = 6000  
@@ -131,9 +104,9 @@ for package in [packageTest]: #packageVal, packageTrain,
         
         print("&"*10)
         print(pathX)
-        pathY = pathX.replace("PET", "CT")
-        filenameX = os.path.basename(pathX)[3:6]
-        filenameY = os.path.basename(pathY)[3:6]
+        pathY = pathX.replace("pet", "sct")
+        filenameX = os.path.basename(pathX)[4:7]
+        filenameY = os.path.basename(pathY)[4:7]
         dataX = nib.load(pathX).get_fdata()
         dataY = nib.load(pathY).get_fdata()
         dataNormX = normX(dataX)
