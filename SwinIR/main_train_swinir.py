@@ -34,8 +34,10 @@ def main():
     parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
     parser.add_argument('--batch', type=int, default=32, help='how many batches in one run')
     parser.add_argument('--loss_display_per_iter', type=int, default=3, help='display how many losses per iteration')
-    parser.add_argument('--folder_sct', type=str, default=None, help='input folder of sCT images')
-    parser.add_argument('--folder_pet', type=str, default=None, help='input folder of NAC PET images')
+    parser.add_argument('--folder_pet', type=str, default="./trainsets/X/train/", help='input folder of NAC PET images')
+    parser.add_argument('--folder_sct', type=str, default="./trainsets/Y/train/", help='input folder of sCT images')
+    parser.add_argument('--folder_pet_v', type=str, default="./trainsets/X/val/", help='input folder of NAC PET images')
+    parser.add_argument('--folder_sct_v', type=str, default="./trainsets/Y/val/", help='input folder of sCT images')
     
     args = parser.parse_args()
 

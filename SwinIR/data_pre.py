@@ -92,7 +92,7 @@ packageVal = [valList, valFolderX, valFolderY, "Validation"]
 packageTest = [testList, testFolderX, testFolderY, "Test"]
 np.save("dataset_division.npy", [packageTrain, packageVal, packageTest])
 
-for package in [packageTest]: #packageVal, packageTrain, 
+for package in [packageVal, packageTrain, packageTest]: # 
 
     fileList = package[0]
     folderX = package[1]
@@ -115,8 +115,8 @@ for package in [packageTest]: #packageVal, packageTrain,
         np.save(folderX + "CUB_" + filenameX + ".npy", dataNormX)
         np.save(folderY + "CUB_" + filenameY + ".npy", dataNormY)        
 
-        print(folderX + "CUB_" + filenameX + ".npy")
-        print(len(fileList), " files are saved. ")
+    print(folderX + "CUB_" + filenameX + ".npy")
+    print(len(fileList), " files are saved. ")
 
 
     
