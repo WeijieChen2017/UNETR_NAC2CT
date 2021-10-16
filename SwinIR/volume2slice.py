@@ -7,6 +7,7 @@
 # 3dresample -dxyz 0.332 0.332 3 -prefix RSZ_4x_PET.nii.gz -input MAC_PET.nii.gz
 # 3dresample -dxyz 0.4688 0.4688 0.6 -prefix brain_4x.nii.gz -input brain1_pet.nii.gz
 # 3dresample -dxyz 1.8752 1.8752 0.6 -prefix brain_1x.nii.gz -input brain_4x.nii.gz
+# 3dresample -dxyz 0.1172 0.1172 0.6 -prefix brain_16x.nii.gz -input brain_4x.nii.gz
 
 import nibabel as nib
 import numpy as np
