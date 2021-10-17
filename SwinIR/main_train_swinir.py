@@ -1,6 +1,7 @@
 import argparse
 import cv2
 import glob
+import time
 import random
 import numpy as np
 import torch.nn as nn
@@ -56,6 +57,7 @@ def main():
     model = define_model(args)
     model.train()
     model = model.to(device)
+    time.sleep(10)
     criterion = nn.SmoothL1Loss()
     optimizer = torch.optim.AdamW(model.parameters())
 
