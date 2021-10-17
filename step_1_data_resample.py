@@ -10,6 +10,6 @@ for filePath in fileList:
 	# CT_011.nii.gz
 	fileIndex = fileName[-10:-7]
 	# print(fileIndex)
-	cmd = "3dresample -dxyz 1.367 1.367 1.367 -prefix CUB_"+fileIndex+".nii.gz -input NPR_"+fileIndex+".nii.gz"
+	cmd = "3dresample -dxyz 2.734 2.734 2.734 -prefix RSZ_"+fileIndex+".nii.gz -input CUB_"+fileIndex+".nii.gz"
 	print(cmd)
 	os.system(cmd)

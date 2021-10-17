@@ -5,6 +5,7 @@
 # -- Average PSNR_Y/SSIM_Y: 23.14 dB; 0.8944
 
 # 3dresample -dxyz 1.367 1.367 1.367 -prefix CUB_011.nii.gz -input CT_011.nii.gz
+# 3dresample -dxyz 2.734 2.734 2.734 -prefix RSZ_011.nii.gz -input CUB_011.nii.gz
 import nibabel as nib
 import numpy as np
 import cv2
