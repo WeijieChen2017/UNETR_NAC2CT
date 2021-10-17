@@ -18,7 +18,7 @@ np.random.seed(seed=813)
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--task', type=str, default='gray_dn', help='classical_sr, lightweight_sr, real_sr, '
+    parser.add_argument('--task', type=str, default='color_dn', help='classical_sr, lightweight_sr, real_sr, '
                                                                      'gray_dn, color_dn, jpeg_car')
     parser.add_argument('--scale', type=int, default=1, help='scale factor: 1, 2, 3, 4, 8') # 1 for dn and jpeg car
     parser.add_argument('--noise', type=int, default=15, help='noise level: 15, 25, 50')
@@ -28,14 +28,14 @@ def main():
                                        'Images are NOT tested patch by patch.')
     parser.add_argument('--large_model', action='store_true', help='use large model, only provided for real image sr')
     parser.add_argument('--model_path', type=str,
-                        default='model_zoo/swinir/004_grayDN_DFWB_s128w8_SwinIR-M_noise50.pth')
+                        default='model_zoo/swinir/005_colorDN_DFWB_s128w8_SwinIR-M_noise25.pth')
     parser.add_argument('--folder_lq', type=str, default=None, help='input low-quality test image folder')
     parser.add_argument('--folder_gt', type=str, default=None, help='input ground-truth test image folder')
     parser.add_argument('--tile', type=int, default=None, help='Tile size, None for no tile during testing (testing as a whole)')
     parser.add_argument('--tile_overlap', type=int, default=32, help='Overlapping of different tiles')
     
     parser.add_argument('--epoch', type=int, default=10, help='how many epochs to train')
-    parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
+    parser.add_argument('--batch', type=int, default=8, help='how many batches in one run')
     parser.add_argument('--loss_display_per_iter', type=int, default=8, help='display how many losses per iteration')
     parser.add_argument('--folder_pet', type=str, default="./trainsets/X/train/", help='input folder of NAC PET images')
     parser.add_argument('--folder_sct', type=str, default="./trainsets/Y/train/", help='input folder of sCT images')
@@ -93,24 +93,24 @@ def main():
             # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
             for idx_iter in range(len_z//args.batch):
 
-                batch_x = np.zeros((args.batch, 1, cube_x_data.shape[0], cube_x_data.shape[1]))
-                batch_y = np.zeros((args.batch, 1, cube_y_data.shape[0], cube_y_data.shape[1]))
+                batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data.shape[1]))
+                batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data.shape[1]))
 
                 for idx_batch in range(args.batch):
                     z_center = input_list[idx_iter*args.batch+idx_batch]
-                    batch_x[idx_batch, :, :, :] = cube_x_data[:, :, z_center]
-                    batch_y[idx_batch, :, :, :] = cube_y_data[:, :, z_center]
-                    # z_before = z_center - 1 if z_center > 0 else 0
-                    # z_after = z_center + 1 if z_center < len_z else len_z
-                    # batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
-                    # batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
-                    # batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
-                    # batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
+                    batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
+                    batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
+                    z_before = z_center - 1 if z_center > 0 else 0
+                    z_after = z_center + 1 if z_center < len_z else len_z
+                    batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
+                    batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
+                    batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
+                    batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 batch_y = torch.from_numpy(batch_y).float().to(device)
-                print(batch_x.shape, batch_y.shape)
-                print(getsizeof(batch_x), getsizeof(batch_y))
+                # print(batch_x.shape, batch_y.shape)
+                # print(getsizeof(batch_x), getsizeof(batch_y))
 
                 optimizer.zero_grad()
                 loss = criterion(model(batch_x), batch_y)
@@ -122,7 +122,7 @@ def main():
                 if idx_iter % args.loss_display_per_iter == args.loss_display_per_iter - 1:
                     loss_mean = np.mean(per_iter_loss)
                     loss_std = np.std(per_iter_loss)
-                    print("===> Epoch[{:03d}]-Case[]({:03d}/{:03d}): ".format(idx_epoch+1, cnt_sct+1, iteration + 1, len_z//args.batch), end='')
+                    print("===> Epoch[{:03d}]-Case[]({:03d}/{:03d}): ".format(idx_epoch+1, cnt_sct+1, idx_iter + 1, len_z//args.batch), end='')
                     print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
 
                 case_loss[idx_iter] = loss.item()
@@ -162,19 +162,19 @@ def main():
             # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
             for idx_iter in range(len_z//args.batch):
 
-                batch_x = np.zeros((args.batch, 1, cube_x_data.shape[0], cube_x_data.shape[1]))
-                batch_y = np.zeros((args.batch, 1, cube_y_data.shape[0], cube_y_data.shape[1]))
+                batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data.shape[1]))
+                batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data.shape[1]))
 
                 for idx_batch in range(args.batch):
                     z_center = input_list[idx_iter*args.batch+idx_batch]
-                    batch_x[idx_batch, :, :, :] = cube_x_data[:, :, z_center]
-                    batch_y[idx_batch, :, :, :] = cube_y_data[:, :, z_center]
-                    # z_before = z_center - 1 if z_center > 0 else 0
-                    # z_after = z_center + 1 if z_center < len_z else len_z
-                    # batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
-                    # batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
-                    # batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
-                    # batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
+                    batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
+                    batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
+                    z_before = z_center - 1 if z_center > 0 else 0
+                    z_after = z_center + 1 if z_center < len_z else len_z
+                    batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
+                    batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
+                    batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
+                    batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 batch_y = torch.from_numpy(batch_y).float().to(device)
