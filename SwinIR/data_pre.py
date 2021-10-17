@@ -101,8 +101,7 @@ for package in [packageVal, packageTrain, packageTest]: #
 
     # npy version
     for pathX in fileList:
-        
-        print("&"*10)
+
         print(pathX)
         pathY = pathX.replace("pet", "sct")
         filenameX = os.path.basename(pathX)[4:7]
@@ -114,8 +113,7 @@ for package in [packageVal, packageTrain, packageTest]: #
 
         np.save(folderX + "CUB_" + filenameX + ".npy", dataNormX)
         np.save(folderY + "CUB_" + filenameY + ".npy", dataNormY)        
-
-    print(folderX + "CUB_" + filenameX + ".npy")
+        print(folderX + "CUB_" + filenameX + ".npy")
     print(len(fileList), " files are saved. ")
 
 

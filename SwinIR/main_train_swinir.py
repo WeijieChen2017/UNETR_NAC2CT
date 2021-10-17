@@ -55,37 +55,29 @@ def main():
     model = define_model(args)
     model.train()
     model = model.to(device)
-
-    # setup folder and path
-    folder, save_dir, border, window_size = setup(args)
-    os.makedirs(save_dir, exist_ok=True)
-    test_results = OrderedDict()
-    test_results['psnr'] = []
-    test_results['ssim'] = []
-    test_results['psnr_y'] = []
-    test_results['ssim_y'] = []
-    test_results['psnr_b'] = []
-    psnr, ssim, psnr_y, ssim_y, psnr_b = 0, 0, 0, 0, 0
-
     criterion = nn.HuberLoss()
     optimizer = torch.optim.AdamW(model.parameters())
 
-    print(model)
-
     sct_list = sorted(glob.glob(args.folder_sct))
+    sct_list_v = sorted(glob.glob(args.folder_sct_v))
     train_loss = np.zeros((args.epoch))
     epoch_loss = np.zeros((len(sct_list)))
+    epoch_loss_v = np.zeros((len(sct_list)))
+    best_val_loss = 1e6
     per_iter_loss = np.zeros((args.loss_display_per_iter))
     case_loss = None
 
     for idx_epoch in range(args.epoch):
 
+        # ====================================>train<====================================
+        model.train()
         # randonmize training dataset
         random.shuffle(sct_list)
         for cnt_sct, sct_path in enumerate(sct_list):
 
             cube_x_path = sct_path.replact("sctTr", "petTr")
             cube_y_path = sct_path
+            print("--->",cube_x_path,"<---")
             cube_x_data = np.load(cube_x_path)
             cube_y_data = np.load(cube_y_path)
             assert cube_x_data.shape == cube_y_data.shape
@@ -124,7 +116,7 @@ def main():
                 if idx_iter % args.loss_display_per_iter == args.loss_display_per_iter - 1:
                     loss_mean = np.mean(per_iter_loss)
                     loss_std = np.std(per_iter_loss)
-                    print("===> Epoch[{}]-Case[]({}/{}): ".format(idx_epoch + 1, cnt_sct+1, iteration + 1, len_z//args.batch), end='')
+                    print("===> Epoch[{:03d}]-Case[]({:03d}/{:03d}): ".format(idx_epoch+1, cnt_sct+1, iteration + 1, len_z//args.batch), end='')
                     print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
 
                 case_loss[idx_iter] = loss.item()
@@ -132,16 +124,75 @@ def main():
             # after training one case
             loss_mean = np.mean(case_loss)
             loss_std = np.std(case_loss)
-            print("===>===> Epoch[{}]-Case[]: ".format(idx_epoch + 1, cnt_sct+1), end='')
+            print("===>===> Epoch[{:03d}]-Case[{:03d}]: ".format(idx_epoch+1, cnt_sct+1), end='')
             print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
             epoch_loss[cnt_sct] = loss_mean
 
         # after training all cases
         loss_mean = np.mean(epoch_loss)
         loss_std = np.std(epoch_loss)
-        print("===>===>===> Epoch[{}]: ".format(idx_epoch + 1), end='')
+        print("===>===>===> Epoch[{}]: ".format(idx_epoch+1), end='')
         print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
         train_loss[idx_epoch] = loss_mean
+        # ====================================>train<====================================
+
+        # ====================================>val<====================================
+        model.eval()
+        random.shuffle(sct_list_v)
+        for cnt_sct, sct_path in enumerate(sct_list_v):
+
+            # train
+            cube_x_path = sct_path.replact("sctTr", "petTr")
+            cube_y_path = sct_path
+            print("--->",cube_x_path,"<---")
+            cube_x_data = np.load(cube_x_path)
+            cube_y_data = np.load(cube_y_path)
+            assert cube_x_data.shape == cube_y_data.shape
+            len_z = cube_x_data.shape[2]
+            case_loss = np.zeros((len_z//args.batch))
+            input_list = list(range(len_z))
+            random.shuffle(input_list)
+
+            # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
+            for idx_iter in range(len_z//args.batch)
+
+                batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data[1]))
+                batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data[1]))
+
+                for idx_batch in range(args.batch):
+                    z_center = input_list[idx_iter*args.batch+idx_batch]
+                    z_before = z_center - 1 if z_center > 0 else 0
+                    z_after = z_center + 1 if z_center < len_z else len_z
+                    batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
+                    batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
+                    batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
+                    batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
+                    batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
+                    batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
+
+                batch_x = torch.from_numpy(batch_x).to(device)
+                batch_y = torch.from_numpy(batch_y).to(device)
+
+                loss = criterion(model(batch_x), batch_y)
+                case_loss[idx_iter] = loss.item()
+            
+            # save one progress shot
+            case_name = os.path.basename(cube_x_path)[4:7]
+            np.save("./Epoch[{:03d}]_Case[{}].npy".format(idx_epoch+1, case_name))
+
+            # after training one case
+            loss_mean = np.mean(case_loss)
+            loss_std = np.std(case_loss)
+            print("===>===> Epoch[{:03d}]-Val-Case[{:03d}]: ".format(idx_epoch+1, cnt_sct+1), end='')
+            print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+            epoch_loss_v[cnt_sct] = loss_mean
+
+        if np.mean(epoch_loss_v) < best_val_loss:
+            # save the best model
+            torch.save(model, "model_best_{:03d}.pth".format(idx_epoch))
+            print("Checkpoint saved at Epoch {:03d}".format(idx_epoch))
+            best_val_loss = np.mean(epoch_loss_v)
+        # ====================================>val<====================================
 
     loss_mean = np.mean(train_loss)
     loss_std = np.std(train_loss)
