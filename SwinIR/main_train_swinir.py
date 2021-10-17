@@ -36,7 +36,7 @@ def main():
     
     parser.add_argument('--epoch', type=int, default=10, help='how many epochs to train')
     parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
-    parser.add_argument('--loss_display_per_iter', type=int, default=8, help='display how many losses per iteration')
+    parser.add_argument('--loss_display_per_iter', type=int, default=30, help='display how many losses per iteration')
     parser.add_argument('--folder_pet', type=str, default="./trainsets/X/train/", help='input folder of NAC PET images')
     parser.add_argument('--folder_sct', type=str, default="./trainsets/Y/train/", help='input folder of sCT images')
     parser.add_argument('--folder_pet_v', type=str, default="./trainsets/X/val/", help='input folder of NAC PET images')
@@ -71,7 +71,7 @@ def main():
     case_loss = None
 
     for idx_epoch in range(args.epoch):
-        print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch), end="")
+        print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1), end="")
 
         # ====================================>train<====================================
         model.train()
@@ -101,7 +101,7 @@ def main():
                     batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
                     batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
                     z_before = z_center - 1 if z_center > 0 else 0
-                    z_after = z_center + 1 if z_center < len_z else len_z
+                    z_after = z_center + 1 if z_center < len_z-1 else len_z-1
                     batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
                     batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
                     batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
