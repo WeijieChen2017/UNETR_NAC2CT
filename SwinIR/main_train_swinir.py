@@ -65,7 +65,7 @@ def main():
     sct_list_v = sorted(glob.glob(args.folder_sct_v+"*.npy"))
     train_loss = np.zeros((args.epoch))
     epoch_loss = np.zeros((len(sct_list)))
-    epoch_loss_v = np.zeros((len(sct_list)))
+    epoch_loss_v = np.zeros((len(sct_list_v)))
     best_val_loss = 1e6
     per_iter_loss = np.zeros((args.loss_display_per_iter))
     case_loss = None
