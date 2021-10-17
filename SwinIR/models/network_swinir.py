@@ -3,6 +3,7 @@
 # Originally Written by Ze Liu, Modified by Jingyun Liang.
 # -----------------------------------------------------------------------------------
 
+import time
 import math
 import torch
 import torch.nn as nn
@@ -831,6 +832,7 @@ class SwinIR(nn.Module):
         else:
             # for image denoising and JPEG compression artifact reduction
             x_first = self.conv_first(x)
+            time.sleep(10)
             res = self.conv_after_body(self.forward_features(x_first)) + x_first
             x = x + self.conv_last(res)
 
