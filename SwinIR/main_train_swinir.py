@@ -81,7 +81,7 @@ def main():
 
             cube_x_path = sct_path.replace("Y", "X")
             cube_y_path = sct_path
-            print("--->",cube_x_path,"<---")
+            print("--->",cube_x_path,"<---", end="")
             cube_x_data = np.load(cube_x_path)
             cube_y_data = np.load(cube_y_path)
             assert cube_x_data.shape == cube_y_data.shape
@@ -151,7 +151,7 @@ def main():
             # train
             cube_x_path = sct_path.replace("Y", "X")
             cube_y_path = sct_path
-            print("--->",cube_x_path,"<---")
+            print("--->",cube_x_path,"<---", end="")
             cube_x_data = np.load(cube_x_path)
             cube_y_data = np.load(cube_y_path)
             assert cube_x_data.shape == cube_y_data.shape
