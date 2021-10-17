@@ -56,7 +56,7 @@ def main():
         open(args.model_path, 'wb').write(r.content)
 
     model = define_model(args)
-    model.train().float()
+    model.train().half()
     model = model.to(device)
     criterion = nn.SmoothL1Loss()
     optimizer = torch.optim.AdamW(model.parameters())
@@ -107,8 +107,8 @@ def main():
                     batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
                     batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
-                batch_x = torch.from_numpy(batch_x).float().to(device)
-                batch_y = torch.from_numpy(batch_y).float().to(device)
+                batch_x = torch.from_numpy(batch_x).half().to(device)
+                batch_y = torch.from_numpy(batch_y).half().to(device)
                 print(batch_x.shape, batch_y.shape)
                 print(getsizeof(batch_x), getsizeof(batch_y))
 
