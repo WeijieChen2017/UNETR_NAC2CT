@@ -59,7 +59,7 @@ def main():
     model.train().float()
     model = model.to(device)
     criterion = nn.SmoothL1Loss()
-    optimizer = torch.optim.AdamW(model.parameters())
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
 
     sct_list = sorted(glob.glob(args.folder_sct+"*.npy"))
     sct_list_v = sorted(glob.glob(args.folder_sct_v+"*.npy"))
