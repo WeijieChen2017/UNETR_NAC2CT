@@ -185,7 +185,7 @@ def main():
             
             # save one progress shot
             case_name = os.path.basename(cube_x_path)[4:7]
-            np.save("./Epoch[{:03d}]_Case[{}].npy".format(idx_epoch+1, case_name))
+            np.save("./Epoch[{:03d}]_Case[{}].npy".format(idx_epoch+1, case_name), (batch_x, batch_y))
 
             # after training one case
             loss_mean = np.mean(case_loss)
