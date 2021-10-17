@@ -35,7 +35,7 @@ def main():
     parser.add_argument('--tile_overlap', type=int, default=32, help='Overlapping of different tiles')
     
     parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
-    parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
+    parser.add_argument('--batch', type=int, default=2, help='how many batches in one run')
     parser.add_argument('--loss_display_per_iter', type=int, default=600, help='display how many losses per iteration')
     parser.add_argument('--folder_pet', type=str, default="./trainsets/X/train/", help='input folder of NAC PET images')
     parser.add_argument('--folder_sct', type=str, default="./trainsets/Y/train/", help='input folder of sCT images')
@@ -200,8 +200,8 @@ def main():
         np.save("epoch_loss_v_{:03d}.npy".format(idx_epoch+1), epoch_loss_v)
         if np.mean(epoch_loss_v) < best_val_loss:
             # save the best model
-            torch.save(model, "model_best_{:03d}.pth".format(idx_epoch))
-            print("Checkpoint saved at Epoch {:03d}".format(idx_epoch))
+            torch.save(model, "model_best_{:03d}.pth".format(idx_epoch+1))
+            print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
             best_val_loss = np.mean(epoch_loss_v)
         # ====================================>val<====================================
 
