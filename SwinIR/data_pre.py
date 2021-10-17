@@ -36,7 +36,7 @@ for folderName in [trainFolderX, testFolderX, valFolderX,
     if not os.path.exists(folderName):
         os.makedirs(folderName)
 
-fileList = glob.glob(folderX+"/*.nii") + glob.glob(folderX+"/*.nii.gz")
+fileList = glob.glob(folderX+"/RSZ_*.nii") + glob.glob(folderX+"/RSZ_*.nii.gz")
 fileList.sort()
 for filePath in fileList:
     print(filePath)
@@ -111,9 +111,9 @@ for package in [packageVal, packageTrain, packageTest]: #
         dataNormX = normX(dataX)
         dataNormY = normY(dataY)
 
-        np.save(folderX + "CUB_" + filenameX + ".npy", dataNormX)
-        np.save(folderY + "CUB_" + filenameY + ".npy", dataNormY)        
-        print(folderX + "CUB_" + filenameX + ".npy")
+        np.save(folderX + "RSZ_" + filenameX + ".npy", dataNormX)
+        np.save(folderY + "RSZ_" + filenameY + ".npy", dataNormY)        
+        print(folderX + "RSZ_" + filenameX + ".npy")
     print(len(fileList), " files are saved. ")
 
 
