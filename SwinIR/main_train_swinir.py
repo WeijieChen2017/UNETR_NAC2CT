@@ -59,8 +59,8 @@ def main():
     criterion = nn.SmoothL1Loss()
     optimizer = torch.optim.AdamW(model.parameters())
 
-    sct_list = sorted(glob.glob(args.folder_sct))
-    sct_list_v = sorted(glob.glob(args.folder_sct_v))
+    sct_list = sorted(glob.glob(args.folder_sct+".npy"))
+    sct_list_v = sorted(glob.glob(args.folder_sct_v+".npy"))
     train_loss = np.zeros((args.epoch))
     epoch_loss = np.zeros((len(sct_list)))
     epoch_loss_v = np.zeros((len(sct_list)))
@@ -69,7 +69,7 @@ def main():
     case_loss = None
 
     for idx_epoch in range(args.epoch):
-        print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch))
+        print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch), end="")
 
         # ====================================>train<====================================
         model.train()
