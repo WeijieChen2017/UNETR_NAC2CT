@@ -28,7 +28,7 @@ def main():
                                        'Images are NOT tested patch by patch.')
     parser.add_argument('--large_model', action='store_true', help='use large model, only provided for real image sr')
     parser.add_argument('--model_path', type=str,
-                        default='model_zoo/swinir/005_colorDN_DFWB_s128w8_SwinIR-M_noise25.pth')
+                        default='model_zoo/swinir/004_grayDN_DFWB_s128w8_SwinIR-M_noise50.pth')
     parser.add_argument('--folder_lq', type=str, default=None, help='input low-quality test image folder')
     parser.add_argument('--folder_gt', type=str, default=None, help='input ground-truth test image folder')
     parser.add_argument('--tile', type=int, default=None, help='Tile size, None for no tile during testing (testing as a whole)')
@@ -93,19 +93,19 @@ def main():
             # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
             for idx_iter in range(len_z//args.batch):
 
-                batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data.shape[1]))
-                batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data.shape[1]))
+                batch_x = np.zeros((args.batch, 1, cube_x_data.shape[0], cube_x_data.shape[1]))
+                batch_y = np.zeros((args.batch, 1, cube_y_data.shape[0], cube_y_data.shape[1]))
 
                 for idx_batch in range(args.batch):
                     z_center = input_list[idx_iter*args.batch+idx_batch]
-                    z_before = z_center - 1 if z_center > 0 else 0
-                    z_after = z_center + 1 if z_center < len_z else len_z
-                    batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
-                    batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
                     batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
                     batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
-                    batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
-                    batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
+                    # z_before = z_center - 1 if z_center > 0 else 0
+                    # z_after = z_center + 1 if z_center < len_z else len_z
+                    # batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
+                    # batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
+                    # batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
+                    # batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 batch_y = torch.from_numpy(batch_y).float().to(device)
@@ -162,22 +162,22 @@ def main():
             # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
             for idx_iter in range(len_z//args.batch):
 
-                batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data.shape[1]))
-                batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data.shape[1]))
+                batch_x = np.zeros((args.batch, 1, cube_x_data.shape[0], cube_x_data.shape[1]))
+                batch_y = np.zeros((args.batch, 1, cube_y_data.shape[0], cube_y_data.shape[1]))
 
                 for idx_batch in range(args.batch):
                     z_center = input_list[idx_iter*args.batch+idx_batch]
-                    z_before = z_center - 1 if z_center > 0 else 0
-                    z_after = z_center + 1 if z_center < len_z else len_z
-                    batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
-                    batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
                     batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
                     batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
-                    batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
-                    batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
+                    # z_before = z_center - 1 if z_center > 0 else 0
+                    # z_after = z_center + 1 if z_center < len_z else len_z
+                    # batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
+                    # batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
+                    # batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
+                    # batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
-                batch_x = torch.from_numpy(batch_x).float16().to(device)
-                batch_y = torch.from_numpy(batch_y).float16().to(device)
+                batch_x = torch.from_numpy(batch_x).float().to(device)
+                batch_y = torch.from_numpy(batch_y).float().to(device)
                 
                 loss = criterion(model(batch_x), batch_y)
                 case_loss[idx_iter] = loss.item()
