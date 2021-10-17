@@ -108,9 +108,9 @@ def main():
                     batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
                     batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
-                batch_x = torch.from_numpy(batch_x).float()#.to(device)
-                batch_y = torch.from_numpy(batch_y).float()#.to(device)
-                print(batch_x, batch_y)
+                batch_x = torch.from_numpy(batch_x).float().to(device)
+                batch_y = torch.from_numpy(batch_y).float().to(device)
+                print(batch_x.shape, batch_y.shape)
                 print(getsizeof(batch_x), getsizeof(batch_y))
                 time.sleep(10)
 
