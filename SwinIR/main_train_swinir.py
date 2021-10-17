@@ -3,6 +3,7 @@ import cv2
 import glob
 import random
 import numpy as np
+import torch.nn as nn
 from collections import OrderedDict
 import os
 import torch
@@ -55,7 +56,7 @@ def main():
     model = define_model(args)
     model.train()
     model = model.to(device)
-    criterion = nn.HuberLoss()
+    criterion = nn.SmoothL1Loss()
     optimizer = torch.optim.AdamW(model.parameters())
 
     sct_list = sorted(glob.glob(args.folder_sct))
