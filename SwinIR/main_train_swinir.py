@@ -178,8 +178,8 @@ def main():
                     batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
                     batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
-                batch_x = torch.from_numpy(batch_x).float().to(device)
-                batch_y = torch.from_numpy(batch_y).float().to(device)
+                batch_x = torch.from_numpy(batch_x).float16().to(device)
+                batch_y = torch.from_numpy(batch_y).float16().to(device)
                 
                 loss = criterion(model(batch_x), batch_y)
                 case_loss[idx_iter] = loss.item()
