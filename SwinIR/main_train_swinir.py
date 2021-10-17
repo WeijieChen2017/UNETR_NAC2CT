@@ -122,7 +122,7 @@ def main():
                 if idx_iter % args.loss_display_per_iter == args.loss_display_per_iter - 1:
                     loss_mean = np.mean(per_iter_loss)
                     loss_std = np.std(per_iter_loss)
-                    print("===> Epoch[{:03d}]-Case[]({:03d}/{:03d}): ".format(idx_epoch+1, cnt_sct+1, idx_iter + 1, len_z//args.batch), end='')
+                    print("===> Epoch[{:03d}]-Case[{:03d}]({:03d}/{:03d}): ".format(idx_epoch+1, cnt_sct+1, idx_iter + 1, len_z//args.batch), end='')
                     print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
 
                 case_loss[idx_iter] = loss.item()
