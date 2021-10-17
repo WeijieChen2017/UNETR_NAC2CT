@@ -98,8 +98,8 @@ def main():
 
                 for idx_batch in range(args.batch):
                     z_center = input_list[idx_iter*args.batch+idx_batch]
-                    batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
-                    batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
+                    batch_x[idx_batch, :, :, :] = cube_x_data[:, :, z_center]
+                    batch_y[idx_batch, :, :, :] = cube_y_data[:, :, z_center]
                     # z_before = z_center - 1 if z_center > 0 else 0
                     # z_after = z_center + 1 if z_center < len_z else len_z
                     # batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
@@ -167,8 +167,8 @@ def main():
 
                 for idx_batch in range(args.batch):
                     z_center = input_list[idx_iter*args.batch+idx_batch]
-                    batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
-                    batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
+                    batch_x[idx_batch, :, :, :] = cube_x_data[:, :, z_center]
+                    batch_y[idx_batch, :, :, :] = cube_y_data[:, :, z_center]
                     # z_before = z_center - 1 if z_center > 0 else 0
                     # z_after = z_center + 1 if z_center < len_z else len_z
                     # batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
