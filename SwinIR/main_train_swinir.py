@@ -69,6 +69,7 @@ def main():
     case_loss = None
 
     for idx_epoch in range(args.epoch):
+        print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch))
 
         # ====================================>train<====================================
         model.train()
@@ -76,7 +77,7 @@ def main():
         random.shuffle(sct_list)
         for cnt_sct, sct_path in enumerate(sct_list):
 
-            cube_x_path = sct_path.replact("sctTr", "petTr")
+            cube_x_path = sct_path.replace("sctTr", "petTr")
             cube_y_path = sct_path
             print("--->",cube_x_path,"<---")
             cube_x_data = np.load(cube_x_path)
@@ -143,7 +144,7 @@ def main():
         for cnt_sct, sct_path in enumerate(sct_list_v):
 
             # train
-            cube_x_path = sct_path.replact("sctTr", "petTr")
+            cube_x_path = sct_path.replace("sctTr", "petTr")
             cube_y_path = sct_path
             print("--->",cube_x_path,"<---")
             cube_x_data = np.load(cube_x_path)
