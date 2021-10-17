@@ -6,6 +6,7 @@ import random
 import numpy as np
 import torch.nn as nn
 from collections import OrderedDict
+from sys import getsizeof
 import os
 import torch
 import requests
@@ -107,8 +108,10 @@ def main():
                     batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
                     batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
-                batch_x = torch.from_numpy(batch_x).float().to(device)
-                batch_y = torch.from_numpy(batch_y).float().to(device)
+                batch_x = torch.from_numpy(batch_x).float()#.to(device)
+                batch_y = torch.from_numpy(batch_y).float()#.to(device)
+                print(getsizeof(batch_x), getsizeof(batch_y))
+                time.sleep(10)
 
                 optimizer.zero_grad()
                 loss = criterion(model(batch_x), batch_y)
@@ -174,9 +177,11 @@ def main():
                     batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
                     batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
 
-                batch_x = torch.from_numpy(batch_x).to(device)
-                batch_y = torch.from_numpy(batch_y).to(device)
-
+                batch_x = torch.from_numpy(batch_x).float()#.to(device)
+                batch_y = torch.from_numpy(batch_y).float()#.to(device)
+                print(getsizeof(batch_x), getsizeof(batch_y))
+                time.sleep(10)
+                
                 loss = criterion(model(batch_x), batch_y)
                 case_loss[idx_iter] = loss.item()
             
