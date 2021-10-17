@@ -56,7 +56,7 @@ def main():
         open(args.model_path, 'wb').write(r.content)
 
     model = define_model(args)
-    model.train().half()
+    model.train().float()
     model = model.to(device)
     criterion = nn.SmoothL1Loss()
     optimizer = torch.optim.AdamW(model.parameters())
