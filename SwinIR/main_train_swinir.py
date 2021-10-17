@@ -87,7 +87,7 @@ def main():
             random.shuffle(input_list)
 
             # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
-            for idx_iter in range(len_z//args.batch)
+            for idx_iter in range(len_z//args.batch):
 
                 batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data[1]))
                 batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data[1]))
@@ -154,7 +154,7 @@ def main():
             random.shuffle(input_list)
 
             # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
-            for idx_iter in range(len_z//args.batch)
+            for idx_iter in range(len_z//args.batch):
 
                 batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data[1]))
                 batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data[1]))
