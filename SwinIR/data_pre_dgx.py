@@ -36,7 +36,7 @@ for folderName in [trainFolderX, testFolderX, valFolderX,
     if not os.path.exists(folderName):
         os.makedirs(folderName)
 
-fileList = glob.glob(folderX+"/mets_*.nii") + glob.glob(folderX+"/mets_*.nii.gz")
+fileList = glob.glob(folderX+"/mets*.nii") + glob.glob(folderX+"/mets*.nii.gz")
 fileList.sort()
 for filePath in fileList:
     print(filePath)
