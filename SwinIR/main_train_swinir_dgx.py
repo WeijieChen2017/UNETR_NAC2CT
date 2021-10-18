@@ -128,7 +128,7 @@ def main():
                     loss_mean = np.mean(per_iter_loss)
                     loss_std = np.std(per_iter_loss)
                     print("===> Epoch[{:03d}]-Case[{:03d}]({:03d}/{:03d}): ".format(idx_epoch+1, cnt_sct+1, idx_iter + 1, len_z//args.batch), end='')
-                    print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+                    print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
 
                 case_loss[idx_iter] = loss.item()
             
@@ -139,14 +139,14 @@ def main():
             loss_mean = np.mean(case_loss)
             loss_std = np.std(case_loss)
             print("===>===> Epoch[{:03d}]-Case[{:03d}]: ".format(idx_epoch+1, cnt_sct+1), end='')
-            print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+            print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
             epoch_loss[cnt_sct] = loss_mean
 
         # after training all cases
         loss_mean = np.mean(epoch_loss)
         loss_std = np.std(epoch_loss)
         print("===>===>===> Epoch[{}]: ".format(idx_epoch+1), end='')
-        print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+        print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
         np.save("epoch_loss_{:03d}.npy".format(idx_epoch+1), epoch_loss)
         train_loss[idx_epoch] = loss_mean
         # ====================================>train<====================================
@@ -199,13 +199,13 @@ def main():
             loss_mean = np.mean(case_loss)
             loss_std = np.std(case_loss)
             print("===>===> Epoch[{:03d}]-Val-Case[{:03d}]: ".format(idx_epoch+1, cnt_sct+1), end='')
-            print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+            print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
             epoch_loss_v[cnt_sct] = loss_mean
 
         loss_mean = np.mean(epoch_loss_v)
         loss_std = np.std(epoch_loss_v)
         print("===>===>===> Epoch[{:03d}]-Val: ".format(idx_epoch+1), end='')
-        print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+        print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
         np.save("epoch_loss_v_{:03d}.npy".format(idx_epoch+1), epoch_loss_v)
         if loss_mean < best_val_loss:
             # save the best model
@@ -217,7 +217,7 @@ def main():
     loss_mean = np.mean(train_loss)
     loss_std = np.std(train_loss)
     print("===>===>===>===>Training finished: ", end='')
-    print("Loss mean: {:.6f} Loss std: {:.6f}".format(loss_mean, loss_std))
+    print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
 
 
 
