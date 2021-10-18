@@ -36,7 +36,8 @@ for folderName in [trainFolderX, testFolderX, valFolderX,
     if not os.path.exists(folderName):
         os.makedirs(folderName)
 
-fileList = glob.glob(folderX+"/mets*.nii") + glob.glob(folderX+"/mets*.nii.gz")
+# fileList = glob.glob(folderX+"/mets*.nii") + glob.glob(folderX+"/mets*.nii.gz")
+fileList = glob.glob(folderX+"/tami*.nii") + glob.glob(folderX+"/tami*.nii.gz")
 fileList.sort()
 for filePath in fileList:
     print(filePath)
@@ -104,8 +105,8 @@ for package in [packageVal, packageTrain, packageTest]: #
 
         print(pathX)
         pathY = pathX.replace("T1MAP", "BRAVO")
-        filenameX = "0"+os.path.basename(pathX)[7:9]
-        filenameY = "0"+os.path.basename(pathY)[7:9]
+        filenameX = "1"+os.path.basename(pathX)[7:9]
+        filenameY = "1"+os.path.basename(pathY)[7:9]
         dataX = nib.load(pathX).get_fdata()
         dataY = nib.load(pathY).get_fdata()
         dataNormX = normX(dataX)
