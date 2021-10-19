@@ -5,6 +5,7 @@ import time
 import random
 import numpy as np
 import torch.nn as nn
+import nibabel as nib
 from collections import OrderedDict
 from sys import getsizeof
 import os
@@ -27,21 +28,22 @@ def main():
                                        'Just used to differentiate two different settings in Table 2 of the paper. '
                                        'Images are NOT tested patch by patch.')
     parser.add_argument('--large_model', action='store_true', help='use large model, only provided for real image sr')
-    parser.add_argument('--model_path', type=str,
-                        default='model_zoo/swinir/005_colorDN_DFWB_s128w8_SwinIR-M_noise25.pth')
+    parser.add_argument('--model_path', type=str, default='saved_models/model_best_021.pth')
     parser.add_argument('--folder_lq', type=str, default=None, help='input low-quality test image folder')
     parser.add_argument('--folder_gt', type=str, default=None, help='input ground-truth test image folder')
     parser.add_argument('--tile', type=int, default=None, help='Tile size, None for no tile during testing (testing as a whole)')
     parser.add_argument('--tile_overlap', type=int, default=32, help='Overlapping of different tiles')
     
-    parser.add_argument('--gpu_ids', type=str, default="7", help='Use which GPU to train')
+    parser.add_argument('--gpu_ids', type=str, default="2", help='Use which GPU to train')
     parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
     parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
     parser.add_argument('--loss_display_per_iter', type=int, default=600, help='display how many losses per iteration')
-    parser.add_argument('--folder_pet', type=str, default="./trainsets/T/train/", help='input folder of T1MAP images')
-    parser.add_argument('--folder_sct', type=str, default="./trainsets/B/train/", help='input folder of BRAVO images')
-    parser.add_argument('--folder_pet_v', type=str, default="./trainsets/T/val/", help='input folder of T1MAP PET images')
-    parser.add_argument('--folder_sct_v', type=str, default="./trainsets/B/val/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet', type=str, default="./trainsets/X/train/", help='input folder of T1MAP images')
+    parser.add_argument('--folder_sct', type=str, default="./trainsets/Y/train/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet_v', type=str, default="./trainsets/X/val/", help='input folder of T1MAP PET images')
+    parser.add_argument('--folder_sct_v', type=str, default="./trainsets/Y/val/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
+    parser.add_argument('--folder_sct_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
     
     args = parser.parse_args()
 
@@ -61,167 +63,57 @@ def main():
         open(args.model_path, 'wb').write(r.content)
 
     model = define_model(args)
-    model.train().float()
+    model.eval().float()
     model = model.to(device)
-    criterion = nn.SmoothL1Loss()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
-
+    
     sct_list = sorted(glob.glob(args.folder_sct+"*.npy"))
-    sct_list_v = sorted(glob.glob(args.folder_sct_v+"*.npy"))
-    train_loss = np.zeros((args.epoch))
-    epoch_loss = np.zeros((len(sct_list)))
-    epoch_loss_v = np.zeros((len(sct_list_v)))
-    best_val_loss = 1e6
-    per_iter_loss = np.zeros((args.loss_display_per_iter))
-    case_loss = None
+    # criterion_list = [nn.L1Loss, nn.MSELoss, nn.SmoothL1Loss]
+    criterion_list = []
+    # (nii_file, loss)
+    loss_mat = np.zeros((len(sct_list), len(criterion_list)))
 
-    for idx_epoch in range(args.epoch):
-        print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
+    for cnt_sct, sct_path in enumerate(sct_list):
 
-        # ====================================>train<====================================
-        model.train()
-        # randonmize training dataset
-        random.shuffle(sct_list)
-        for cnt_sct, sct_path in enumerate(sct_list):
+        cube_x_path = sct_path.replace("Y", "X")
+        cube_y_path = sct_path
+        print("--->",cube_x_path,"<---", end="")
+        cube_x_data = np.load(cube_x_path)
+        assert cube_x_data.shape == cube_y_data.shape
+        len_z = cube_x_data.shape[1]
+        y_hat = np.zeros(cube_y_data.shape)
+        
+        for idx in range(len_z):
 
-            cube_x_path = sct_path.replace("Y", "X")
-            cube_y_path = sct_path
-            print("--->",cube_x_path,"<---", end="")
-            cube_x_data = np.load(cube_x_path)
-            cube_y_data = np.load(cube_y_path)
-            assert cube_x_data.shape == cube_y_data.shape
-            len_z = cube_x_data.shape[1]
-            case_loss = np.zeros((len_z//args.batch))
-            input_list = list(range(len_z))
-            random.shuffle(input_list)
+            batch_x = np.zeros((1, 3, cube_x_data.shape[0], cube_x_data.shape[2]))
+            batch_y = cube_y_data[:, idx, :]
 
-            # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
-            for idx_iter in range(len_z//args.batch):
+            z_center = idx
+            batch_x[0, 1, :, :] = cube_x_data[:, z_center, :]
+            z_before = z_center - 1 if z_center > 0 else 0
+            z_after = z_center + 1 if z_center < len_z-1 else len_z-1
+            batch_x[0, 0, :, :] = cube_x_data[:, z_before, :]
+            batch_x[0, 2, :, :] = cube_x_data[:, z_after, :]
 
-                batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data.shape[2]))
-                batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data.shape[2]))
+            batch_x = torch.from_numpy(batch_x).float().to(device)
 
-                for idx_batch in range(args.batch):
-                    z_center = input_list[idx_iter*args.batch+idx_batch]
-                    batch_x[idx_batch, 1, :, :] = cube_x_data[:, z_center, :]
-                    batch_y[idx_batch, 1, :, :] = cube_y_data[:, z_center, :]
-                    z_before = z_center - 1 if z_center > 0 else 0
-                    z_after = z_center + 1 if z_center < len_z-1 else len_z-1
-                    batch_x[idx_batch, 0, :, :] = cube_x_data[:, z_before, :]
-                    batch_y[idx_batch, 0, :, :] = cube_y_data[:, z_before, :]
-                    batch_x[idx_batch, 2, :, :] = cube_x_data[:, z_after, :]
-                    batch_y[idx_batch, 2, :, :] = cube_y_data[:, z_after, :]
+            y_hat[:, idx, :] = np.squeeze(model(batch_x).numpy())
+        
+        for cnt_loss, loss_fnc in enumerate(criterion_list):
+            curr_loss = loss_fnc(cube_y_data, y_hat).item()
+            loss_mat[cnt_sct, cnt_loss] = curr_loss
+            print("===> Loss[{}]: {:6}".format(loss_fnc.__name__, curr_loss), end='')
+        
+        file_idx = os.path.basename(sct_path)[4:7]
+        nifty_name = "mets" if file_idx[0] == "0" else "tami"
+        nifty_name = nifty_name + "000" + file_idx[1:] + ".nii.gz"
+        nifty_name = "./t1map2bravo/T1MAP/" + nifty_name
+        nifty_file = nib.load(nifty_file)
+        print("Loaded from ", nifty_name, end="")
 
-                batch_x = torch.from_numpy(batch_x).float().to(device)
-                batch_y = torch.from_numpy(batch_y).float().to(device)
-                # print(batch_x.shape, batch_y.shape)
-                # print(getsizeof(batch_x), getsizeof(batch_y))
-
-                optimizer.zero_grad()
-                loss = criterion(model(batch_x), batch_y)
-                loss.backward()
-                optimizer.step()
-
-                per_iter_loss[idx_iter % args.loss_display_per_iter] = loss.item()
-                case_loss[idx_iter] = loss.item()
-                if idx_iter % args.loss_display_per_iter == args.loss_display_per_iter - 1:
-                    loss_mean = np.mean(per_iter_loss)
-                    loss_std = np.std(per_iter_loss)
-                    print("===> Epoch[{:03d}]-Case[{:03d}]({:03d}/{:03d}): ".format(idx_epoch+1, cnt_sct+1, idx_iter + 1, len_z//args.batch), end='')
-                    print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-
-                case_loss[idx_iter] = loss.item()
-            
-            case_name = os.path.basename(cube_x_path)[4:7]
-            np.save("Epoch[{:03d}]_Case[{}]_t.npy".format(idx_epoch+1, case_name), (batch_x.cpu().numpy(), batch_y.cpu().numpy(), model(batch_x).cpu().numpy))
-
-            # after training one case
-            loss_mean = np.mean(case_loss)
-            loss_std = np.std(case_loss)
-            print("===>===> Epoch[{:03d}]-Case[{:03d}]: ".format(idx_epoch+1, cnt_sct+1), end='')
-            print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-            epoch_loss[cnt_sct] = loss_mean
-
-        # after training all cases
-        loss_mean = np.mean(epoch_loss)
-        loss_std = np.std(epoch_loss)
-        print("===>===>===> Epoch[{}]: ".format(idx_epoch+1), end='')
-        print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-        np.save("epoch_loss_{:03d}.npy".format(idx_epoch+1), epoch_loss)
-        train_loss[idx_epoch] = loss_mean
-        # ====================================>train<====================================
-
-        # ====================================>val<====================================
-        model.eval()
-        random.shuffle(sct_list_v)
-        for cnt_sct, sct_path in enumerate(sct_list_v):
-
-            # train
-            cube_x_path = sct_path.replace("Y", "X")
-            cube_y_path = sct_path
-            print("--->",cube_x_path,"<---", end="")
-            cube_x_data = np.load(cube_x_path)
-            cube_y_data = np.load(cube_y_path)
-            assert cube_x_data.shape == cube_y_data.shape
-            len_z = cube_x_data.shape[1]
-            case_loss = np.zeros((len_z//args.batch))
-            input_list = list(range(len_z))
-            random.shuffle(input_list)
-
-            # 0:[32, 45, 23, 55], 1[76, 74, 54, 99], 3[65, 92, 28, 77], ...
-            for idx_iter in range(len_z//args.batch):
-
-                batch_x = np.zeros((args.batch, 3, cube_x_data.shape[0], cube_x_data.shape[2]))
-                batch_y = np.zeros((args.batch, 3, cube_y_data.shape[0], cube_y_data.shape[2]))
-
-                for idx_batch in range(args.batch):
-                    z_center = input_list[idx_iter*args.batch+idx_batch]
-                    batch_x[idx_batch, 1, :, :] = cube_x_data[:, z_center, :]
-                    batch_y[idx_batch, 1, :, :] = cube_y_data[:, z_center, :]
-                    z_before = z_center - 1 if z_center > 0 else 0
-                    z_after = z_center + 1 if z_center < len_z-1 else len_z-1
-                    batch_x[idx_batch, 0, :, :] = cube_x_data[:, z_before, :]
-                    batch_y[idx_batch, 0, :, :] = cube_y_data[:, z_before, :]
-                    batch_x[idx_batch, 2, :, :] = cube_x_data[:, z_after, :]
-                    batch_y[idx_batch, 2, :, :] = cube_y_data[:, z_after, :]
-
-                batch_x = torch.from_numpy(batch_x).float().to(device)
-                batch_y = torch.from_numpy(batch_y).float().to(device)
-                
-                loss = criterion(model(batch_x), batch_y)
-                case_loss[idx_iter] = loss.item()
-            
-            # save one progress shot
-            case_name = os.path.basename(cube_x_path)[4:7]
-            np.save("Epoch[{:03d}]_Case[{}]_v.npy".format(idx_epoch+1, case_name), (batch_x.cpu().numpy(), batch_y.cpu().numpy(), model(batch_x).cpu().numpy))
-
-            # after training one case
-            loss_mean = np.mean(case_loss)
-            loss_std = np.std(case_loss)
-            print("===>===> Epoch[{:03d}]-Val-Case[{:03d}]: ".format(idx_epoch+1, cnt_sct+1), end='')
-            print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-            epoch_loss_v[cnt_sct] = loss_mean
-
-        loss_mean = np.mean(epoch_loss_v)
-        loss_std = np.std(epoch_loss_v)
-        print("===>===>===> Epoch[{:03d}]-Val: ".format(idx_epoch+1), end='')
-        print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-        np.save("epoch_loss_v_{:03d}.npy".format(idx_epoch+1), epoch_loss_v)
-        if loss_mean < best_val_loss:
-            # save the best model
-            torch.save(model, "model_best_{:03d}.pth".format(idx_epoch+1))
-            print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
-            best_val_loss = loss_mean
-        # ====================================>val<====================================
-
-    loss_mean = np.mean(train_loss)
-    loss_std = np.std(train_loss)
-    print("===>===>===>===>Training finished: ", end='')
-    print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-
-
-
-
+        pred_file = nib.Nifti1Image(y_hat, nifty_file.affine, nifty_file.header)
+        pred_name = "./t1map2bravo/pred/"+"PRD_"+file_idx+".nii.gz"
+        nib.save(pred_file, pred_name)
+        print("Saved to ", pred_name)
 
 
 
