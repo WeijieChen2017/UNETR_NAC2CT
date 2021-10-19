@@ -24,12 +24,12 @@ channelX = 1
 channelY = 1
 
 # create directory and search nifty files
-trainFolderX = "./trainsets/T/train/"
-trainFolderY = "./trainsets/B/train/"
-testFolderX = "./trainsets/T/test/"
-testFolderY = "./trainsets/B/test/"
-valFolderX = "./trainsets/T/val/"
-valFolderY = "./trainsets/B/val/"
+trainFolderX = "./trainsets/X/train/"
+trainFolderY = "./trainsets/Y/train/"
+testFolderX = "./trainsets/X/test/"
+testFolderY = "./trainsets/Y/test/"
+valFolderX = "./trainsets/X/val/"
+valFolderY = "./trainsets/Y/val/"
 
 for folderName in [trainFolderX, testFolderX, valFolderX,
                    trainFolderY, testFolderY, valFolderY]:

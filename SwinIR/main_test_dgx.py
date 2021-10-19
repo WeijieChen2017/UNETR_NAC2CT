@@ -38,10 +38,10 @@ def main():
     parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
     parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
     parser.add_argument('--loss_display_per_iter', type=int, default=600, help='display how many losses per iteration')
-    parser.add_argument('--folder_pet', type=str, default="./trainsets/X/train/", help='input folder of T1MAP images')
-    parser.add_argument('--folder_sct', type=str, default="./trainsets/Y/train/", help='input folder of BRAVO images')
-    parser.add_argument('--folder_pet_v', type=str, default="./trainsets/X/val/", help='input folder of T1MAP PET images')
-    parser.add_argument('--folder_sct_v', type=str, default="./trainsets/Y/val/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet', type=str, default="./trainsets/T/train/", help='input folder of T1MAP images')
+    parser.add_argument('--folder_sct', type=str, default="./trainsets/B/train/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet_v', type=str, default="./trainsets/T/val/", help='input folder of T1MAP PET images')
+    parser.add_argument('--folder_sct_v', type=str, default="./trainsets/B/val/", help='input folder of BRAVO images')
     
     args = parser.parse_args()
 
