@@ -49,7 +49,7 @@ def main():
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 
-    device = torch.device('cuda' if  torch.cuda.is_available()else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # set up model
     if os.path.exists(args.model_path):
         print(f'loading model from {args.model_path}')
