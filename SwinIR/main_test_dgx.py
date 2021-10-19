@@ -111,7 +111,7 @@ def main():
         nifty_name = "mets" if file_idx[0] == "0" else "tami"
         nifty_name = nifty_name + "000" + file_idx[1:] + ".nii.gz"
         nifty_name = "./t1map2bravo/T1MAP/" + nifty_name
-        nifty_file = nib.load(nifty_file)
+        nifty_file = nib.load(nifty_name)
         print("Loaded from ", nifty_name, end="")
 
         pred_file = nib.Nifti1Image(y_hat, nifty_file.affine, nifty_file.header)
