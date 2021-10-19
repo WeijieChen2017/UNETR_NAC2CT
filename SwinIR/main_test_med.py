@@ -18,8 +18,10 @@ from utils import util_calculate_psnr_ssim as util
 np.random.seed(seed=813)
 
 def main():
-    parser = argparse.ArgumentParser()
     parser.add_argument('--gpu_ids', type=str, default="2", help='Use which GPU to train')
+    parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
+    parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
+    parser.add_argument('--loss_display_per_iter', type=int, default=600, help='display how many losses per iteration')
     parser.add_argument('--folder_pet_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
     parser.add_argument('--folder_sct_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
     parser.add_argument('--weights_path', type=str, default='saved_models/model_best_021.pth')
@@ -28,7 +30,6 @@ def main():
     gpu_list = ','.join(str(x) for x in args.gpu_ids)
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
-
     device = torch.device('cuda' if  torch.cuda.is_available()else 'cpu')
 
     print(f'loading model from {args.weights_path}')
@@ -36,7 +37,7 @@ def main():
     model.eval().float()
     model = model.to(device)
     
-    sct_list = sorted(glob.glob(args.folder_sct_te+"*.npy"))
+    sct_list = sorted(glob.glob(args.folder_sct+"*.npy"))
     # criterion_list = [nn.L1Loss, nn.MSELoss, nn.SmoothL1Loss]
     criterion_list = []
     # (nii_file, loss)
