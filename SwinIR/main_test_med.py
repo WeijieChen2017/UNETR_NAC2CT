@@ -20,8 +20,8 @@ np.random.seed(seed=813)
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu_ids', type=str, default="2", help='Use which GPU to train')
-    parser.add_argument('--folder_X_te', type=str, default="./trainsets/trainsets/X/test/", help='input folder of T1MAP PET images')
-    parser.add_argument('--folder_Y_te', type=str, default="./trainsets/trainsets/Y/test/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_X_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
+    parser.add_argument('--folder_Y_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
     parser.add_argument('--weights_path', type=str, default='./saved_models/model_best_039.pth')
     args = parser.parse_args()
 
@@ -77,7 +77,7 @@ def main():
         
         file_idx = os.path.basename(X_path)[4:7]
         nifty_name = "RSZ_" + nifty_name + ".nii.gz"
-        nifty_name = "./trainsets/trainsets/petTr/" + nifty_name
+        nifty_name = "./trainsets/petTr/" + nifty_name
         nifty_file = nib.load(nifty_name)
         print("Loaded from", nifty_name, end="")
 
