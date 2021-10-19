@@ -62,7 +62,8 @@ def main():
         print(f'downloading model {args.model_path}')
         open(args.model_path, 'wb').write(r.content)
 
-    model = define_model(args)
+    # model = define_model(args)
+    model = torch.load(args.weights_path)
     model.eval().float()
     model = model.to(device)
     
@@ -78,6 +79,7 @@ def main():
         cube_y_path = sct_path
         print("--->",cube_x_path,"<---", end="")
         cube_x_data = np.load(cube_x_path)
+        cube_y_data = np.load(cube_y_path)
         assert cube_x_data.shape == cube_y_data.shape
         len_z = cube_x_data.shape[1]
         y_hat = np.zeros(cube_y_data.shape)
@@ -247,9 +249,8 @@ def define_model(args):
                     mlp_ratio=2, upsampler='', resi_connection='1conv')
         param_key_g = 'params'
 
-    # pretrained_model = torch.load(args.model_path)
-    # model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
-    model = torch.load(args.weights_path)
+    pretrained_model = torch.load(args.model_path)
+    model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
     return model
 
 
