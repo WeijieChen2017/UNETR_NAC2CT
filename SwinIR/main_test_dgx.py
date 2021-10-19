@@ -99,7 +99,7 @@ def main():
 
             batch_x = torch.from_numpy(batch_x).float().to(device)
 
-            y_hat[:, idx, :] = np.squeeze(model(batch_x).cpu().detach().numpy())
+            y_hat[:, idx, :] = np.squeeze(model(batch_x).cpu().detach().numpy()[1, :, :])
         
         for cnt_loss, loss_fnc in enumerate(criterion_list):
             curr_loss = loss_fnc(cube_y_data, y_hat).item()
