@@ -53,16 +53,17 @@ def main():
 
     device = torch.device('cuda' if  torch.cuda.is_available()else 'cpu')
     # set up model
-    if os.path.exists(args.model_path):
-        print(f'loading model from {args.model_path}')
-    else:
-        os.makedirs(os.path.dirname(args.model_path), exist_ok=True)
-        url = 'https://github.com/JingyunLiang/SwinIR/releases/download/v0.0/{}'.format(os.path.basename(args.model_path))
-        r = requests.get(url, allow_redirects=True)
-        print(f'downloading model {args.model_path}')
-        open(args.model_path, 'wb').write(r.content)
+    # if os.path.exists(args.model_path):
+    #     print(f'loading model from {args.model_path}')
+    # else:
+    #     os.makedirs(os.path.dirname(args.model_path), exist_ok=True)
+    #     url = 'https://github.com/JingyunLiang/SwinIR/releases/download/v0.0/{}'.format(os.path.basename(args.model_path))
+    #     r = requests.get(url, allow_redirects=True)
+    #     print(f'downloading model {args.model_path}')
+    #     open(args.model_path, 'wb').write(r.content)
 
     # model = define_model(args)
+    print(f'loading model from {args.weights_path}')
     model = torch.load(args.weights_path)
     model.eval().float()
     model = model.to(device)
@@ -98,7 +99,7 @@ def main():
 
             batch_x = torch.from_numpy(batch_x).float().to(device)
 
-            y_hat[:, idx, :] = np.squeeze(model(batch_x).numpy())
+            y_hat[:, idx, :] = np.squeeze(model(batch_x).cpu().numpy())
         
         for cnt_loss, loss_fnc in enumerate(criterion_list):
             curr_loss = loss_fnc(cube_y_data, y_hat).item()
