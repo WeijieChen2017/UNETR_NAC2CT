@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--gpu_ids', type=str, default="2", help='Use which GPU to train')
     parser.add_argument('--folder_pet_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
     parser.add_argument('--folder_sct_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
-    parser.add_argument('--weights_path', type=str, default='saved_models/model_best_021.pth')
+    parser.add_argument('--weights_path', type=str, default='saved_models/model_best_002.pth')
     args = parser.parse_args()
 
     gpu_list = ','.join(str(x) for x in args.gpu_ids)
@@ -46,7 +46,7 @@ def main():
 
         cube_x_path = sct_path.replace("Y", "X")
         cube_y_path = sct_path
-        print("--->",cube_x_path,"<---", end="")
+        print("->",cube_x_path,"<-", end="")
         cube_x_data = np.load(cube_x_path)
         cube_y_data = np.load(cube_y_path)
         assert cube_x_data.shape == cube_y_data.shape
@@ -78,14 +78,14 @@ def main():
         file_idx = os.path.basename(sct_path)[4:7]
         nifty_name = "mets" if file_idx[0] == "0" else "tami"
         nifty_name = nifty_name + "000" + file_idx[1:] + ".nii.gz"
-        nifty_name = "./t1map2bravo/T1MAP/" + nifty_name
+        nifty_name = "./t1map2bravo/BRAVO/" + nifty_name
         nifty_file = nib.load(nifty_name)
         print("Loaded from", nifty_name, end="")
 
-        pred_file = nib.Nifti1Image(y_hat, nifty_file.affine, nifty_file.header)
+        pred_file = nib.Nifti1Image(y_hat*7000, nifty_file.affine, nifty_file.header)
         pred_name = "./t1map2bravo/pred/"+"PRD_"+file_idx+".nii.gz"
         nib.save(pred_file, pred_name)
-        print("Saved to", pred_name)
+        print(" Saved to", pred_name)
 
 if __name__ == '__main__':
     main()

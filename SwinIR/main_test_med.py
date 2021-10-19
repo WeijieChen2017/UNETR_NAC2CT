@@ -18,10 +18,8 @@ from utils import util_calculate_psnr_ssim as util
 np.random.seed(seed=813)
 
 def main():
+    parser = argparse.ArgumentParser()
     parser.add_argument('--gpu_ids', type=str, default="2", help='Use which GPU to train')
-    parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
-    parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
-    parser.add_argument('--loss_display_per_iter', type=int, default=600, help='display how many losses per iteration')
     parser.add_argument('--folder_pet_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
     parser.add_argument('--folder_sct_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
     parser.add_argument('--weights_path', type=str, default='saved_models/model_best_021.pth')
@@ -30,6 +28,7 @@ def main():
     gpu_list = ','.join(str(x) for x in args.gpu_ids)
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+
     device = torch.device('cuda' if  torch.cuda.is_available()else 'cpu')
 
     print(f'loading model from {args.weights_path}')
@@ -37,7 +36,7 @@ def main():
     model.eval().float()
     model = model.to(device)
     
-    sct_list = sorted(glob.glob(args.folder_sct+"*.npy"))
+    sct_list = sorted(glob.glob(args.folder_sct_te+"*.npy"))
     # criterion_list = [nn.L1Loss, nn.MSELoss, nn.SmoothL1Loss]
     criterion_list = []
     # (nii_file, loss)
@@ -47,7 +46,7 @@ def main():
 
         cube_x_path = sct_path.replace("Y", "X")
         cube_y_path = sct_path
-        print("--->",cube_x_path,"<---", end="")
+        print("->",cube_x_path,"<-", end="")
         cube_x_data = np.load(cube_x_path)
         cube_y_data = np.load(cube_y_path)
         assert cube_x_data.shape == cube_y_data.shape
@@ -86,7 +85,7 @@ def main():
         pred_file = nib.Nifti1Image(y_hat, nifty_file.affine, nifty_file.header)
         pred_name = "./t1map2bravo/pred/"+"PRD_"+file_idx+".nii.gz"
         nib.save(pred_file, pred_name)
-        print("Saved to", pred_name)
+        print(" Saved to", pred_name)
 
 if __name__ == '__main__':
     main()
