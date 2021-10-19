@@ -28,7 +28,7 @@ def main():
                                        'Just used to differentiate two different settings in Table 2 of the paper. '
                                        'Images are NOT tested patch by patch.')
     parser.add_argument('--large_model', action='store_true', help='use large model, only provided for real image sr')
-    parser.add_argument('--model_path', type=str, default='saved_models/model_best_021.pth')
+    parser.add_argument('--model_path', type=str, default='model_zoo/swinir/005_colorDN_DFWB_s128w8_SwinIR-M_noise25.pth')
     parser.add_argument('--folder_lq', type=str, default=None, help='input low-quality test image folder')
     parser.add_argument('--folder_gt', type=str, default=None, help='input ground-truth test image folder')
     parser.add_argument('--tile', type=int, default=None, help='Tile size, None for no tile during testing (testing as a whole)')
@@ -44,7 +44,7 @@ def main():
     parser.add_argument('--folder_sct_v', type=str, default="./trainsets/Y/val/", help='input folder of BRAVO images')
     parser.add_argument('--folder_pet_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
     parser.add_argument('--folder_sct_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
-    
+    parser.add_argument('--weights_path', type=str, default='saved_models/model_best_021.pth')
     args = parser.parse_args()
 
     gpu_list = ','.join(str(x) for x in args.gpu_ids)
@@ -247,7 +247,7 @@ def define_model(args):
                     mlp_ratio=2, upsampler='', resi_connection='1conv')
         param_key_g = 'params'
 
-    pretrained_model = torch.load(args.model_path)
+    pretrained_model = torch.load(args.weights_path)
     model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
 
     return model
