@@ -12,7 +12,7 @@ import os
 import torch
 import requests
 
-from models.network_swinir import SwinIR as net
+# from models.network_swinir import SwinIR as net
 from utils import util_calculate_psnr_ssim as util
 
 np.random.seed(seed=813)
