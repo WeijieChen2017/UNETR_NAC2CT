@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--gpu_ids', type=str, default="0", help='Use which GPU to train')
     parser.add_argument('--folder_X_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
     parser.add_argument('--folder_Y_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
-    parser.add_argument('--weights_path', type=str, default='saved_models/model_best_039.pth')
+    parser.add_argument('--weights_path', type=str, default='./saved_models/model_best_039.pth')
     args = parser.parse_args()
 
     gpu_list = ','.join(str(x) for x in args.gpu_ids)
