@@ -20,8 +20,8 @@ np.random.seed(seed=813)
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu_ids', type=str, default="0", help='Use which GPU to train')
-    parser.add_argument('--folder_pet_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
-    parser.add_argument('--folder_sct_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_X_te', type=str, default="./trainsets/X/test/", help='input folder of T1MAP PET images')
+    parser.add_argument('--folder_Y_te', type=str, default="./trainsets/Y/test/", help='input folder of BRAVO images')
     parser.add_argument('--weights_path', type=str, default='saved_models/model_best_039.pth')
     args = parser.parse_args()
 
@@ -29,24 +29,23 @@ def main():
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 
-    assert torch.cuda.is_available()
-    device = torch.device('cuda' if  torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if  torch.cuda.is_available()else 'cpu')
 
     print(f'loading model from {args.weights_path}')
     model = torch.load(args.weights_path)
     model.eval().float()
     model = model.to(device)
     
-    sct_list = sorted(glob.glob(args.folder_sct_te+"*.npy"))
+    X_list = sorted(glob.glob(args.folder_X_te+"*.npy"))
     # criterion_list = [nn.L1Loss, nn.MSELoss, nn.SmoothL1Loss]
     criterion_list = []
     # (nii_file, loss)
-    loss_mat = np.zeros((len(sct_list), len(criterion_list)))
+    loss_mat = np.zeros((len(X_list), len(criterion_list)))
 
-    for cnt_sct, sct_path in enumerate(sct_list):
+    for cnt_X, X_path in enumerate(X_list):
 
-        cube_x_path = sct_path.replace("Y", "X")
-        cube_y_path = sct_path
+        cube_x_path = X_path
+        cube_y_path = X_path.replace("X", "Y")
         print("->",cube_x_path,"<-", end="")
         cube_x_data = np.load(cube_x_path)
         cube_y_data = np.load(cube_y_path)
@@ -73,12 +72,12 @@ def main():
         
         for cnt_loss, loss_fnc in enumerate(criterion_list):
             curr_loss = loss_fnc(cube_y_data, y_hat).item()
-            loss_mat[cnt_sct, cnt_loss] = curr_loss
+            loss_mat[cnt_X, cnt_loss] = curr_loss
             print("===> Loss[{}]: {:6}".format(loss_fnc.__name__, curr_loss), end='')
         
-        file_idx = os.path.basename(sct_path)[4:7]
-        nifty_name = "RSZ_" + file_idx + ".nii.gz"
-        nifty_name = "./trainsets/petTr/" + nifty_name
+        file_idx = os.path.basename(X_path)[4:7]
+        nifty_name = "RSZ_" + nifty_name + ".nii.gz"
+        nifty_name = "./trainsets/sctTr/" + nifty_name
         nifty_file = nib.load(nifty_name)
         print("Loaded from", nifty_name, end="")
 
