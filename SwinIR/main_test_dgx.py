@@ -247,9 +247,9 @@ def define_model(args):
                     mlp_ratio=2, upsampler='', resi_connection='1conv')
         param_key_g = 'params'
 
-    pretrained_model = torch.load(args.weights_path)
-    model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
-
+    # pretrained_model = torch.load(args.model_path)
+    # model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
+    model = torch.load(args.weights_path)
     return model
 
 
