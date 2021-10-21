@@ -6,30 +6,31 @@ import os
 
 def normX(data):
     data[data<0] = 0
-    data[data>5] = 5  
-    data = data / 5
+    data[data>1500] = 1500 
+    data = data / 1500
     return data
 
 def normY(data):
     data[data<0] = 0
-    data[data>7000] = 7000
-    data = data / 7000
+    data[data>3000] = 3000
+    data = data / 3000
     return data
 
-folderX = "./t1map2bravo/T1MAP/"
-folderY = "./t1map2bravo/BRAVO/"
+root_folder = "./MR2CT_B/"
+folderX = root_folder+"MRB/"
+folderY = root_folder+"CTB/"
 valRatio = 0.2
 testRatio = 0.1
 channelX = 1
 channelY = 1
 
 # create directory and search nifty files
-trainFolderX = "./trainsets/X/train/"
-trainFolderY = "./trainsets/Y/train/"
-testFolderX = "./trainsets/X/test/"
-testFolderY = "./trainsets/Y/test/"
-valFolderX = "./trainsets/X/val/"
-valFolderY = "./trainsets/Y/val/"
+trainFolderX = root_folder+"X/train/"
+trainFolderY = root_folder+"Y/train/"
+testFolderX = root_folder+"X/test/"
+testFolderY = root_folder+"Y/test/"
+valFolderX = root_folder+"X/val/"
+valFolderY = root_folder+"Y/val/"
 
 for folderName in [trainFolderX, testFolderX, valFolderX,
                    trainFolderY, testFolderY, valFolderY]:
@@ -37,7 +38,7 @@ for folderName in [trainFolderX, testFolderX, valFolderX,
         os.makedirs(folderName)
 
 # fileList = glob.glob(folderX+"/mets*.nii") + glob.glob(folderX+"/mets*.nii.gz")
-fileList = glob.glob(folderX+"/tami*.nii") + glob.glob(folderX+"/tami*.nii.gz")
+fileList = glob.glob(folderX+"/RSZ*.nii") + glob.glob(folderX+"/RSZ*.nii.gz")
 fileList.sort()
 for filePath in fileList:
     print(filePath)
@@ -91,7 +92,7 @@ print('-'*50)
 packageTrain = [trainList, trainFolderX, trainFolderY, "Train"]
 packageVal = [valList, valFolderX, valFolderY, "Validation"]
 packageTest = [testList, testFolderX, testFolderY, "Test"]
-np.save("dataset_division.npy", [packageTrain, packageVal, packageTest])
+np.save(root_folder+"dataset_division.npy", [packageTrain, packageVal, packageTest])
 
 for package in [packageVal, packageTrain, packageTest]: # 
 
@@ -104,9 +105,9 @@ for package in [packageVal, packageTrain, packageTest]: #
     for pathX in fileList:
 
         print(pathX)
-        pathY = pathX.replace("T1MAP", "BRAVO")
-        filenameX = "1"+os.path.basename(pathX)[7:9]
-        filenameY = "1"+os.path.basename(pathY)[7:9]
+        pathY = pathX.replace("MRB", "CTB")
+        filenameX = os.path.basename(pathX)[4:7]
+        filenameY = os.path.basename(pathY)[4:7]
         dataX = nib.load(pathX).get_fdata()
         dataY = nib.load(pathY).get_fdata()
         dataNormX = normX(dataX)
