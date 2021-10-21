@@ -38,10 +38,10 @@ def main():
     parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
     parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
     parser.add_argument('--loss_display_per_iter', type=int, default=600, help='display how many losses per iteration')
-    parser.add_argument('--folder_pet', type=str, default="./trainsets/X/train/", help='input folder of T1MAP images')
-    parser.add_argument('--folder_sct', type=str, default="./trainsets/Y/train/", help='input folder of BRAVO images')
-    parser.add_argument('--folder_pet_v', type=str, default="./trainsets/X/val/", help='input folder of T1MAP PET images')
-    parser.add_argument('--folder_sct_v', type=str, default="./trainsets/Y/val/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet', type=str, default="./MR2CT_B/X/train/", help='input folder of T1MAP images')
+    parser.add_argument('--folder_sct', type=str, default="./MR2CT_B/Y/train/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet_v', type=str, default="./MR2CT_B/X/val/", help='input folder of T1MAP PET images')
+    parser.add_argument('--folder_sct_v', type=str, default="./MR2CT_B/Y/val/", help='input folder of BRAVO images')
     
     args = parser.parse_args()
 
@@ -133,7 +133,7 @@ def main():
                 case_loss[idx_iter] = loss.item()
             
             case_name = os.path.basename(cube_x_path)[4:7]
-            np.save("Epoch[{:03d}]_Case[{}]_t.npy".format(idx_epoch+1, case_name), (batch_x.cpu().numpy(), batch_y.cpu().numpy(), model(batch_x).cpu().numpy))
+            np.save("Epoch[{:03d}]_Case[{}]_t.npy".format(idx_epoch+1, case_name), (batch_x.cpu().numpy(), batch_y.cpu().numpy(), model(batch_x).cpu().numpy()))
 
             # after training one case
             loss_mean = np.mean(case_loss)
@@ -193,7 +193,7 @@ def main():
             
             # save one progress shot
             case_name = os.path.basename(cube_x_path)[4:7]
-            np.save("Epoch[{:03d}]_Case[{}]_v.npy".format(idx_epoch+1, case_name), (batch_x.cpu().numpy(), batch_y.cpu().numpy(), model(batch_x).cpu().numpy))
+            np.save("Epoch[{:03d}]_Case[{}]_v.npy".format(idx_epoch+1, case_name), (batch_x.cpu().numpy(), batch_y.cpu().numpy(), model(batch_x).cpu().numpy()))
 
             # after training one case
             loss_mean = np.mean(case_loss)
