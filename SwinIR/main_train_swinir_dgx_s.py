@@ -34,15 +34,15 @@ def main():
     parser.add_argument('--tile', type=int, default=None, help='Tile size, None for no tile during testing (testing as a whole)')
     parser.add_argument('--tile_overlap', type=int, default=32, help='Overlapping of different tiles')
     
-    parser.add_argument('--tag', type=str, default="MR2CT_B_", help='Save_prefix')
-    parser.add_argument('--gpu_ids', type=str, default="7", help='Use which GPU to train')
+    parser.add_argument('--tag', type=str, default="MR2CT_S_", help='Save_prefix')
+    parser.add_argument('--gpu_ids', type=str, default="4", help='Use which GPU to train')
     parser.add_argument('--epoch', type=int, default=100, help='how many epochs to train')
     parser.add_argument('--batch', type=int, default=1, help='how many batches in one run')
     parser.add_argument('--loss_display_per_iter', type=int, default=600, help='display how many losses per iteration')
-    parser.add_argument('--folder_pet', type=str, default="./MR2CT_B/X/train/", help='input folder of T1MAP images')
-    parser.add_argument('--folder_sct', type=str, default="./MR2CT_B/Y/train/", help='input folder of BRAVO images')
-    parser.add_argument('--folder_pet_v', type=str, default="./MR2CT_B/X/val/", help='input folder of T1MAP PET images')
-    parser.add_argument('--folder_sct_v', type=str, default="./MR2CT_B/Y/val/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet', type=str, default="./MR2CT_S/X/train/", help='input folder of T1MAP images')
+    parser.add_argument('--folder_sct', type=str, default="./MR2CT_S/Y/train/", help='input folder of BRAVO images')
+    parser.add_argument('--folder_pet_v', type=str, default="./MR2CT_S/X/val/", help='input folder of T1MAP PET images')
+    parser.add_argument('--folder_sct_v', type=str, default="./MR2CT_S/Y/val/", help='input folder of BRAVO images')
     
     args = parser.parse_args()
 
