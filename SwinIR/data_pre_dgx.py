@@ -16,9 +16,9 @@ def normY(data):
     data = data / 3000
     return data
 
-root_folder = "./MR2CT_B/"
-folderX = root_folder+"MRB/"
-folderY = root_folder+"CTB/"
+root_folder = "./MR2CT_S/"
+folderX = root_folder+"MRS/"
+folderY = root_folder+"CTS/"
 valRatio = 0.2
 testRatio = 0.1
 channelX = 1
@@ -105,7 +105,7 @@ for package in [packageVal, packageTrain, packageTest]: #
     for pathX in fileList:
 
         print(pathX)
-        pathY = pathX.replace("MRB", "CTB")
+        pathY = pathX.replace("MRS", "CTS")
         filenameX = os.path.basename(pathX)[4:7]
         filenameY = os.path.basename(pathY)[4:7]
         dataX = nib.load(pathX).get_fdata()
