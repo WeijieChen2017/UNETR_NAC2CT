@@ -134,7 +134,10 @@ def main():
                 case_loss[idx_iter] = loss.item()
             
             case_name = os.path.basename(cube_x_path)[4:7]
-            np.save(args.tag+"Epoch[{:03d}]_Case[{}]_t.npy".format(idx_epoch+1, case_name), (batch_x.cpu().numpy(), batch_y.cpu().numpy(), model(batch_x).cpu().numpy()))
+            np.save(args.tag+"Epoch[{:03d}]_Case[{}]_t.npy".format(idx_epoch+1, case_name),
+                    (batch_x.cpu().detach().numpy(),
+                     batch_y.cpu().detach().numpy(),
+                     model(batch_x).cpu().detach().numpy()))
 
             # after training one case
             loss_mean = np.mean(case_loss)
@@ -194,8 +197,11 @@ def main():
             
             # save one progress shot
             case_name = os.path.basename(cube_x_path)[4:7]
-            np.save(args.tag+"Epoch[{:03d}]_Case[{}]_v.npy".format(idx_epoch+1, case_name), (batch_x.cpu().numpy(), batch_y.cpu().numpy(), model(batch_x).cpu().numpy()))
-
+            np.save(args.tag+"Epoch[{:03d}]_Case[{}]_v.npy".format(idx_epoch+1, case_name),
+                    (batch_x.cpu().detach().numpy(),
+                     batch_y.cpu().detach().numpy(),
+                     model(batch_x).cpu().detach().numpy()))
+            
             # after training one case
             loss_mean = np.mean(case_loss)
             loss_std = np.std(case_loss)
