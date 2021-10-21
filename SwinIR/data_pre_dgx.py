@@ -4,10 +4,11 @@ import numpy as np
 import glob
 import os
 
+# 3000 for stealth and 1500 for bravo
 def normX(data):
     data[data<0] = 0
-    data[data>1500] = 1500 
-    data = data / 1500
+    data[data>3000] = 3000 
+    data = data / 3000
     return data
 
 def normY(data):
