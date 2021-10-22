@@ -76,7 +76,7 @@ def main():
             print("===> Loss[{}]: {:6}".format(loss_fnc.__name__, curr_loss), end='')
         
         file_idx = os.path.basename(X_path)[4:7]
-        nifty_name = "RSZ_" + nifty_name + ".nii.gz"
+        nifty_name = "RSZ_" + file_idx + ".nii.gz"
         nifty_name = "./trainsets/petTr/" + nifty_name
         nifty_file = nib.load(nifty_name)
         print("Loaded from", nifty_name, end="")
