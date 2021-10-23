@@ -18,10 +18,11 @@ def normY(data):
     return data
 
 root_folder = "./large_input/"
+file_prefix = "RSZ"
 folderX = root_folder+"petTr/"
 folderY = root_folder+"sctTr/"
-valRatio = 0.2
-testRatio = 0.1
+valRatio = 0
+testRatio = 0
 channelX = 1
 channelY = 1
 
@@ -39,7 +40,7 @@ for folderName in [trainFolderX, testFolderX, valFolderX,
         os.makedirs(folderName)
 
 # fileList = glob.glob(folderX+"/mets*.nii") + glob.glob(folderX+"/mets*.nii.gz")
-fileList = glob.glob(folderX+"/CUB*.nii") + glob.glob(folderX+"/CUB*.nii.gz")
+fileList = glob.glob(folderX+"/"+file_prefix+"*.nii") + glob.glob(folderX+"/"+file_prefix+"*.nii.gz")
 fileList.sort()
 for filePath in fileList:
     print(filePath)
@@ -106,7 +107,7 @@ for package in [packageVal, packageTrain, packageTest]: #
     for pathX in fileList:
 
         print(pathX)
-        pathY = pathX.replace("MRS", "CTS")
+        pathY = pathX.replace("petTr", "sctTr")
         filenameX = os.path.basename(pathX)[4:7]
         filenameY = os.path.basename(pathY)[4:7]
         dataX = nib.load(pathX).get_fdata()
@@ -114,9 +115,9 @@ for package in [packageVal, packageTrain, packageTest]: #
         dataNormX = normX(dataX)
         dataNormY = normY(dataY)
 
-        np.save(folderX + "CUB_" + filenameX + ".npy", dataNormX)
-        np.save(folderY + "CUB_" + filenameY + ".npy", dataNormY)        
-        print(folderX + "CUB_" + filenameX + ".npy")
+        np.save(folderX + ""+file_prefix+"_" + filenameX + ".npy", dataNormX)
+        np.save(folderY + ""+file_prefix+"_" + filenameY + ".npy", dataNormY)        
+        print(folderX + ""+file_prefix+"_" + filenameX + ".npy")
     print(len(fileList), " files are saved. ")
 
 
