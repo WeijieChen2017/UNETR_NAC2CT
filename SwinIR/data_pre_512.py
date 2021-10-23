@@ -4,6 +4,7 @@ import numpy as np
 import glob
 import os
 
+# 3000 for stealth and 1500 for bravo
 def normX(data):
     data[data<0] = 0
     data[data>3000] = 6000  
@@ -16,27 +17,29 @@ def normY(data):
     data = (data + 1000) / 4000
     return data
 
-folderX = "./trainsets/petTr/"
-folderY = "./trainsets/sctTr/"
-valRatio = 0.5
-testRatio = 0
+root_folder = "./large_input/"
+folderX = root_folder+"petTr/"
+folderY = root_folder+"sctTr/"
+valRatio = 0.2
+testRatio = 0.1
 channelX = 1
 channelY = 1
 
 # create directory and search nifty files
-trainFolderX = "./trainsets/X/train/"
-trainFolderY = "./trainsets/Y/train/"
-testFolderX = "./trainsets/X/test/"
-testFolderY = "./trainsets/Y/test/"
-valFolderX = "./trainsets/X/val/"
-valFolderY = "./trainsets/Y/val/"
+trainFolderX = root_folder+"X/train/"
+trainFolderY = root_folder+"Y/train/"
+testFolderX = root_folder+"X/test/"
+testFolderY = root_folder+"Y/test/"
+valFolderX = root_folder+"X/val/"
+valFolderY = root_folder+"Y/val/"
 
 for folderName in [trainFolderX, testFolderX, valFolderX,
                    trainFolderY, testFolderY, valFolderY]:
     if not os.path.exists(folderName):
         os.makedirs(folderName)
 
-fileList = glob.glob(folderX+"/CUB_*.nii") + glob.glob(folderX+"/CUB_*.nii.gz")
+# fileList = glob.glob(folderX+"/mets*.nii") + glob.glob(folderX+"/mets*.nii.gz")
+fileList = glob.glob(folderX+"/CUB*.nii") + glob.glob(folderX+"/CUB*.nii.gz")
 fileList.sort()
 for filePath in fileList:
     print(filePath)
@@ -90,7 +93,7 @@ print('-'*50)
 packageTrain = [trainList, trainFolderX, trainFolderY, "Train"]
 packageVal = [valList, valFolderX, valFolderY, "Validation"]
 packageTest = [testList, testFolderX, testFolderY, "Test"]
-np.save("dataset_division.npy", [packageTrain, packageVal, packageTest])
+np.save(root_folder+"dataset_division.npy", [packageTrain, packageVal, packageTest])
 
 for package in [packageVal, packageTrain, packageTest]: # 
 
@@ -103,7 +106,7 @@ for package in [packageVal, packageTrain, packageTest]: #
     for pathX in fileList:
 
         print(pathX)
-        pathY = pathX.replace("pet", "sct")
+        pathY = pathX.replace("MRS", "CTS")
         filenameX = os.path.basename(pathX)[4:7]
         filenameY = os.path.basename(pathY)[4:7]
         dataX = nib.load(pathX).get_fdata()
